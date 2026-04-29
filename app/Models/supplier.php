@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Supplier extends Model
 {
-
+    //
     protected $table = 'suppliers';
 
     protected $fillable = [
@@ -21,5 +21,4 @@ class Supplier extends Model
     {
         return $this->hasMany(Obat::class,'supplier_id');
     }
-
 }
