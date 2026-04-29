@@ -236,7 +236,7 @@ Route::prefix('kasir')->middleware(['auth'])->group(function () {
         ->name('kasir.penjualan');
 
     Route::post('/keranjang/store', [PenjualanController::class,'store'])
-        ->name('keranjang.store');
+        ->name('kasir.keranjang.store');
 
     Route::delete('/keranjang/{id}', [PenjualanController::class,'destroy'])
         ->name('keranjang.destroy');
