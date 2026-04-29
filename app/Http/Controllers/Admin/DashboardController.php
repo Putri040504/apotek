@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Obat;
-use App\Models\Supplier;
 use App\Models\User;
+use App\Models\Supplier;
 use App\Models\Pembelian;
 use App\Models\Penjualan;
 use Illuminate\Support\Facades\DB;
