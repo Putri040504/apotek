@@ -20,11 +20,27 @@
 
 <div class="col-md-6 mb-3">
 <label class="form-label">Kode Obat</label>
-<input type="text" name="kode_obat"
+<input type="text" name="kode_obat" id="tambahKodeObat"
 value="{{ 'OB'.str_pad($obat->count()+1,3,'0',STR_PAD_LEFT) }}"
 class="form-control bg-light"
 readonly
 style="cursor:not-allowed">
+<button type="button" class="btn btn-sm btn-outline-secondary mt-1" id="btnPreviewBarcodeTambah">
+<i class="bi bi-upc"></i> Preview / Cetak Barcode
+</button>
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Barcode Kemasan (EAN)</label>
+<div class="input-group">
+<input type="text" name="barcode" id="tambahBarcode" class="form-control"
+value="{{ old('barcode') }}"
+placeholder="8991234567890" maxlength="50" inputmode="numeric" autocomplete="off">
+<button type="button" class="btn btn-outline-primary" id="btnScanBarcodeTambah" title="Scan dari kemasan">
+<i class="bi bi-camera"></i>
+</button>
+</div>
+<small class="text-muted d-block mt-1">Opsional — isi angka di kemasan untuk scan POS/pembelian.</small>
 </div>
 
 <div class="col-md-6 mb-3">

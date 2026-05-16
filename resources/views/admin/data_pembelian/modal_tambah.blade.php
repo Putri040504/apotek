@@ -45,7 +45,12 @@
 <!-- NAMA OBAT -->
 <div class="col-md-6">
 
-<label class="form-label">Nama Obat</label>
+<label class="form-label d-flex justify-content-between align-items-center">
+    <span>Nama Obat</span>
+    <button type="button" class="btn btn-outline-primary btn-sm py-0" id="btnPembelianScan" title="Scan barcode">
+        <i class="bi bi-camera"></i> Scan
+    </button>
+</label>
 
 <select name="obat_id" id="obat" class="form-control form-control-sm select2">
 

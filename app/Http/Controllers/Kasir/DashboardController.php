@@ -7,6 +7,7 @@ use App\Models\Penjualan;
 use App\Models\DetailPenjualan;
 use App\Models\Pembelian;
 use App\Models\Obat;
+use App\Models\StokBatch;
 use Carbon\Carbon;
 use DB;
 
@@ -74,14 +75,10 @@ $obat_expired = Obat::whereDate('tanggal_exp','<',Carbon::now())
 
 
 // ============================
-// FEFO (FIRST EXPIRED FIRST OUT)
+// FEFO (FIRST EXPIRED FIRST OUT) — per batch stok
 // ============================
 
-$fifo_obat = Obat::where('stok','>',0)
-->whereDate('tanggal_exp','>=',Carbon::now())
-->orderBy('tanggal_exp','asc')
-->limit(5)
-->get();
+$fifo_obat = StokBatch::fefoPriorities(5);
 
 // ============================
 // TRANSAKSI TERBARU

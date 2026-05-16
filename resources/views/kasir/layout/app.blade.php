@@ -3,383 +3,387 @@
 
 <head>
 
-<title>Kasir - Apotek Zema</title>
+    <title>Kasir - Apotek Zema</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- SELECT2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-<!-- DATATABLE -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <!-- DATATABLE -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 
-@stack('styles')
 
-<style>
+    @stack('styles')
 
-/* (SEMUA CSS ANDA TIDAK SAYA UBAH SAMA SEKALI) */
+    <style>
+        /* (SEMUA CSS ANDA TIDAK SAYA UBAH SAMA SEKALI) */
 
-body{
-background:#f4f6f9;
-overflow:hidden;
-font-family:Segoe UI;
-}
+        body {
+            background: #f4f6f9;
+            overflow: hidden;
+            font-family: Segoe UI;
+        }
 
-.wrapper{
-display:flex;
-height:100vh;
-}
+        .wrapper {
+            display: flex;
+            height: 100vh;
+        }
 
-/* SIDEBAR */
+        /* SIDEBAR */
 
-.sidebar{
-width:260px;
-background:#117345;
-color:white;
-display:flex;
-flex-direction:column;
-}
+        .sidebar {
+            width: 260px;
+            background: #117345;
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
 
-/* SCROLL */
+        /* SCROLL */
 
-.sidebar-menu{
-flex:1;
-overflow-y:auto;
-padding:18px;
-scrollbar-width:none;
-}
+        .sidebar-menu {
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px;
+            scrollbar-width: none;
+        }
 
-.sidebar-menu::-webkit-scrollbar{
-display:none;
-}
+        .sidebar-menu::-webkit-scrollbar {
+            display: none;
+        }
 
-/* LOGO */
+        /* LOGO */
 
-.sidebar-logo{
-display:flex;
-align-items:center;
-gap:20px;
-margin-bottom:15px;
-}
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
 
-.sidebar-logo img{
-width:50px;
-height:auto;
-margin-left:10px;
-}
+        .sidebar-logo img {
+            width: 50px;
+            height: auto;
+            margin-left: 10px;
+        }
 
-.sidebar-title{
-font-weight:700;
-font-size:18px;
-line-height:1.2;
-}
+        .sidebar-title {
+            font-weight: 700;
+            font-size: 18px;
+            line-height: 1.2;
+        }
 
-/* MENU */
+        /* MENU */
 
-.sidebar .nav-link{
-color:white;
-padding:9px 12px;
-border-radius:6px;
-font-size:15px;
-display:flex;
-align-items:center;
-gap:10px;
-transition:all 0.3s ease;
-}
+        .sidebar .nav-link {
+            color: white;
+            padding: 9px 12px;
+            border-radius: 6px;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
 
-.sidebar .nav-link:hover{
-background:#20a827;
-transform:translateX(6px);
-}
+        .sidebar .nav-link:hover {
+            background: #20a827;
+            transform: translateX(6px);
+        }
 
-.sidebar .nav-link.active{
-background:#20a827;
-transform:translateX(6px);
-}
+        .sidebar .nav-link.active {
+            background: #20a827;
+            transform: translateX(6px);
+        }
 
-.sidebar .nav-link i{
-font-size:17px;
-}
+        .sidebar .nav-link i {
+            font-size: 17px;
+        }
 
-.menu-title{
-font-size:12px;
-color:#b7d3b9;
-margin-top:12px;
-margin-bottom:4px;
-letter-spacing:1px;
-}
+        .menu-title {
+            font-size: 12px;
+            color: #b7d3b9;
+            margin-top: 12px;
+            margin-bottom: 4px;
+            letter-spacing: 1px;
+        }
 
-.main{
-flex:1;
-display:flex;
-flex-direction:column;
-}
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
 
-.topbar{
-background:white;
-padding:15px 30px;
-display:flex;
-align-items:center;
-justify-content:flex-end;
-position:relative;
-border-bottom:3px solid #198754;
-box-shadow:0 4px 10px rgba(28,148,62,0.08);
-z-index:10;
-}
+        .topbar {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+            border-bottom: 3px solid #198754;
+            box-shadow: 0 4px 10px rgba(28, 148, 62, 0.08);
+            z-index: 10;
+        }
 
-.page-title{
-position:absolute;
-left:45%;
-transform:translateX(-50%);
-font-weight:700;
-color:#198754;
-margin:0;
-font-size:22px;
-}
+        .page-title {
+            position: absolute;
+            left: 45%;
+            transform: translateX(-50%);
+            font-weight: 700;
+            color: #198754;
+            margin: 0;
+            font-size: 22px;
+        }
 
-.user-profile{
-display:flex;
-align-items:center;
-gap:8px;
-}
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-.user-profile img{
-width:32px;
-height:32px;
-border-radius:50%;
-object-fit:cover;
-}
+        .user-profile img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
 
-.content{
-flex:1;
-overflow-y:auto;
-padding:30px;
-scrollbar-width:none;
-}
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            scrollbar-width: none;
+        }
 
-.content::-webkit-scrollbar{
-display:none;
-}
+        .content::-webkit-scrollbar {
+            display: none;
+        }
 
-/* BUTTON PROFIL AGAR TIDAK BIRU */
+        /* BUTTON PROFIL AGAR TIDAK BIRU */
 
-.user-profile:focus,
-.user-profile:active,
-.user-profile.show{
-border-color:#198754 !important;
-box-shadow:0 0 0 0.2rem rgba(25,135,84,0.25) !important;
-background:#f8f9fa !important;
-color:#198754 !important;
-}
+        .user-profile:focus,
+        .user-profile:active,
+        .user-profile.show {
+            border-color: #198754 !important;
+            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
+            background: #f8f9fa !important;
+            color: #198754 !important;
+        }
 
-/* DROPDOWN ITEM HOVER JUGA HIJAU */
+        /* DROPDOWN ITEM HOVER JUGA HIJAU */
 
-.dropdown-item:hover{
-background:#e9f7ef;
-color:#198754;
-}
-
-</style>
+        .dropdown-item:hover {
+            background: #e9f7ef;
+            color: #198754;
+        }
+    </style>
 
 </head>
 
 <body>
 
-<div class="wrapper">
+    <div class="wrapper">
 
-<!-- SIDEBAR -->
-<div class="sidebar">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
 
-<div class="sidebar-menu">
+            <div class="sidebar-menu">
 
-<div class="sidebar-logo">
+                <div class="sidebar-logo">
 
-<img src="{{ asset('logo/apotek zema.png') }}">
+                    <img src="{{ asset('logo/apotek zema.png') }}">
 
-<div class="sidebar-title">
-APOTEK ZEMA
-</div>
+                    <div class="sidebar-title">
+                        APOTEK ZEMA
+                    </div>
 
-</div>
+                </div>
 
-<hr>
+                <hr>
 
-<ul class="nav flex-column">
+                <ul class="nav flex-column">
 
-<div class="menu-title">MAIN MENU</div>
+                    <div class="menu-title">MAIN MENU</div>
 
-<li>
-<a class="nav-link {{ request()->is('kasir/dashboard') ? 'active' : '' }}" href="/kasir/dashboard">
-<i class="bi bi-speedometer2"></i>
-Dashboard
-</a>
-</li>
+                    <li>
+                        <a class="nav-link {{ request()->is('kasir/pos*') ? 'active' : '' }}"
+                            href="{{ route('kasir.pos') }}">
+                            <i class="bi bi-upc-scan"></i>
+                            Kasir POS
+                        </a>
+                    </li>
 
-<hr>
+                    <li>
+                        <a class="nav-link {{ request()->is('kasir/dashboard') ? 'active' : '' }}"
+                            href="/kasir/dashboard">
+                            <i class="bi bi-speedometer2"></i>
+                            Dashboard
+                        </a>
+                    </li>
 
-<div class="menu-title">TRANSAKSI</div>
+                    <hr>
 
-<li>
-<a class="nav-link {{ request()->is('kasir/penjualan*') ? 'active' : '' }}" href="/kasir/penjualan">
-<i class="bi bi-cart"></i>
-Data Penjualan
-</a>
-</li>
+                    <div class="menu-title">TRANSAKSI</div>
 
-<li>
-<a class="nav-link {{ request()->is('kasir/riwayat*') ? 'active' : '' }}" href="/kasir/riwayat">
-<i class="bi bi-clock-history"></i>
-Riwayat Penjualan
-</a>
-</li>
+                    <li>
+                        <a class="nav-link {{ request()->is('kasir/riwayat*') ? 'active' : '' }}"
+                            href="{{ route('riwayat.penjualan') }}">
+                            <i class="bi bi-receipt"></i>
+                            Riwayat Penjualan
+                        </a>
+                    </li>
 
-</ul>
+                </ul>
 
-</div>
+            </div>
 
-</div>
+        </div>
 
 
-<!-- MAIN -->
-<div class="main">
+        <!-- MAIN -->
+        <div class="main">
 
-<div class="topbar">
+            <div class="topbar">
 
-<h3 class="page-title">
-@yield('title')
-</h3>
+                <h3 class="page-title">
+                    @yield('title')
+                </h3>
 
-<!-- NOTIFIKASI -->
-<div class="dropdown me-3">
+                <!-- NOTIFIKASI -->
+                <div class="dropdown me-3">
 
-<a class="nav-link position-relative" data-bs-toggle="dropdown" style="cursor:pointer">
+                    <a class="nav-link position-relative" data-bs-toggle="dropdown" style="cursor:pointer">
 
-<i class="bi bi-bell fs-5"></i>
+                        <i class="bi bi-bell fs-5"></i>
 
-@if(($stok_habis->count() ?? 0) + ($obat_expired->count() ?? 0) > 0)
+                        @if (($stok_habis->count() ?? 0) + ($obat_expired->count() ?? 0) > 0)
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
 
-<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ ($stok_habis->count() ?? 0) + ($obat_expired->count() ?? 0) }}
 
-{{ ($stok_habis->count() ?? 0) + ($obat_expired->count() ?? 0) }}
+                            </span>
+                        @endif
 
-</span>
+                    </a>
 
-@endif
+                    <ul class="dropdown-menu dropdown-menu-end" style="width:300px">
 
-</a>
+                        @if (isset($stok_habis) && $stok_habis->count() > 0)
 
-<ul class="dropdown-menu dropdown-menu-end" style="width:300px">
+                            <li class="dropdown-header text-danger">
+                                Stok Habis
+                            </li>
 
-@if(isset($stok_habis) && $stok_habis->count() > 0)
+                            @foreach ($stok_habis as $obat)
+                                <li class="dropdown-item text-danger">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    {{ $obat->nama_obat }} - Stok Habis
+                                </li>
+                            @endforeach
 
-<li class="dropdown-header text-danger">
-Stok Habis
-</li>
+                        @endif
 
-@foreach($stok_habis as $obat)
 
-<li class="dropdown-item text-danger">
-<i class="bi bi-exclamation-triangle"></i>
-{{ $obat->nama_obat }} - Stok Habis
-</li>
+                        @if (isset($obat_expired) && $obat_expired->count() > 0)
 
-@endforeach
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
 
-@endif
+                            <li class="dropdown-header text-warning">
+                                Hampir Expired
+                            </li>
 
+                            @foreach ($obat_expired as $obat)
+                                <li class="dropdown-item text-warning">
+                                    <i class="bi bi-clock-history"></i>
+                                    {{ $obat->nama_obat }} - Exp {{ $obat->tanggal_exp }}
+                                </li>
+                            @endforeach
 
-@if(isset($obat_expired) && $obat_expired->count() > 0)
+                        @endif
 
-<li><hr class="dropdown-divider"></li>
 
-<li class="dropdown-header text-warning">
-Hampir Expired
-</li>
+                        @if (($stok_habis->count() ?? 0) == 0 && ($obat_expired->count() ?? 0) == 0)
+                            <li class="dropdown-item text-muted">
+                                Tidak ada notifikasi
+                            </li>
+                        @endif
 
-@foreach($obat_expired as $obat)
+                    </ul>
 
-<li class="dropdown-item text-warning">
-<i class="bi bi-clock-history"></i>
-{{ $obat->nama_obat }} - Exp {{ $obat->tanggal_exp }}
-</li>
+                </div>
 
-@endforeach
 
-@endif
+                <!-- USER -->
+                <div class="dropdown">
 
+                    <button class="btn btn-light dropdown-toggle user-profile" data-bs-toggle="dropdown">
 
-@if(($stok_habis->count() ?? 0) == 0 && ($obat_expired->count() ?? 0) == 0)
+                        <img
+                            src="{{ Auth::user()->foto ? asset('storage/foto/' . Auth::user()->foto) : asset('logo/user.png') }}">
 
-<li class="dropdown-item text-muted">
-Tidak ada notifikasi
-</li>
+                        <span>{{ Auth::user()->role }}</span>
 
-@endif
+                    </button>
 
-</ul>
+                    <ul class="dropdown-menu dropdown-menu-end">
 
-</div>
+                        <li>
+                            <a class="dropdown-item" href="/kasir/profile">
+                                <i class="bi bi-person"></i> Profil
+                            </a>
+                        </li>
 
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
 
-<!-- USER -->
-<div class="dropdown">
+                        <li>
 
-<button class="btn btn-light dropdown-toggle user-profile" data-bs-toggle="dropdown">
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button class="dropdown-item">
+                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                </button>
+                            </form>
 
-<img src="{{ Auth::user()->foto ? asset('storage/foto/'.Auth::user()->foto) : asset('logo/user.png') }}">
+                        </li>
 
-<span>{{ Auth::user()->role }}</span>
+                    </ul>
 
-</button>
+                </div>
 
-<ul class="dropdown-menu dropdown-menu-end">
+            </div>
 
-<li>
-<a class="dropdown-item" href="/kasir/profile">
-<i class="bi bi-person"></i> Profil
-</a>
-</li>
+            <div class="content">
 
-<li><hr class="dropdown-divider"></li>
+                @yield('content')
 
-<li>
+            </div>
 
-<form method="POST" action="{{ route('logout') }}">
-@csrf
-<button class="dropdown-item">
-<i class="bi bi-box-arrow-right"></i> Logout
-</button>
-</form>
+        </div>
 
-</li>
+    </div>
 
-</ul>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-</div>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
-<div class="content">
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
-@yield('content')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-</div>
-
-</div>
-
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-@stack('scripts')
+    @stack('scripts')
 
 </body>
+
 </html>

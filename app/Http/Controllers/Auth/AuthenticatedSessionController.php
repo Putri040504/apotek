@@ -32,7 +32,7 @@ class AuthenticatedSessionController extends Controller
         return redirect('/admin/dashboard');
     }
 
-    return redirect('/kasir/dashboard');
+    return redirect('/kasir/pos');
 }
 
     /**

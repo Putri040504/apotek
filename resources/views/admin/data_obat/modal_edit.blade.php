@@ -31,6 +31,19 @@ style="cursor:not-allowed">
 </div>
 
 <div class="col-md-6 mb-3">
+<label class="form-label">Barcode Kemasan (EAN)</label>
+<div class="input-group">
+<input type="text" name="barcode" id="editBarcode{{ $o->id }}" class="form-control"
+value="{{ $o->barcode }}"
+placeholder="8991234567890" maxlength="50" inputmode="numeric" autocomplete="off">
+<button type="button" class="btn btn-outline-primary btn-scan-barcode-edit" data-target="#editBarcode{{ $o->id }}" title="Scan dari kemasan">
+<i class="bi bi-camera"></i>
+</button>
+</div>
+<small class="text-muted d-block mt-1">Kosongkan jika tidak pakai barcode kemasan.</small>
+</div>
+
+<div class="col-md-6 mb-3">
 <label class="form-label">Nama Obat</label>
 <input type="text" name="nama_obat" value="{{ $o->nama_obat }}" class="form-control">
 </div>

@@ -121,6 +121,12 @@ font-size:13px;
 
 @section('content')
 
+<div class="mb-3">
+    <a href="{{ route('kasir.pos') }}" class="btn btn-success btn-lg">
+        <i class="bi bi-upc-scan"></i> Buka Kasir POS
+    </a>
+</div>
+
 <div class="row g-4">
 
     <!-- STATISTIK -->
@@ -471,16 +477,16 @@ $exp = \Carbon\Carbon::parse($o->tanggal_exp);
 
                     <tbody>
 
-                    @forelse($fifo_obat ?? [] as $o)
+                    @forelse($fifo_obat ?? [] as $batch)
 
                     <tr>
 
                     <td>{{ $loop->iteration }}</td>
-                    <td class="text-start">{{ $o->nama_obat }}</td>
-                    <td>{{ \Carbon\Carbon::parse($o->tanggal)->format('d-m-Y') }}</td>
-                    <td>{{ $o->stok }}</td>
+                    <td class="text-start">{{ $batch->obat->nama_obat ?? '-' }}</td>
+                    <td>{{ $batch->created_at?->format('d-m-Y') ?? '-' }}</td>
+                    <td>{{ $batch->jumlah }}</td>
                     @php
-$exp = \Carbon\Carbon::parse($o->tanggal_exp);
+$exp = \Carbon\Carbon::parse($batch->tanggal_exp);
 @endphp
 
 <td class="

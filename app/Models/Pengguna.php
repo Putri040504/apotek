@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Pengguna extends Model
+class pengguna extends Model
 {
     //
 }

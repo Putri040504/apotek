@@ -237,22 +237,22 @@ Prioritas Penjualan Obat (FEFO)
 
 <tbody>
 
-@foreach($prioritas_fefo as $obat)
+@foreach($prioritas_fefo as $batch)
 
 <tr>
 
-<td>{{ $obat->nama_obat }}</td>
+<td>{{ $batch->obat->nama_obat ?? '-' }}</td>
 
 <td>
 <span class="badge bg-primary">
-{{ $obat->stok }}
+{{ $batch->jumlah }}
 </span>
 </td>
 
 <td>
 
 @php
-$exp = \Carbon\Carbon::parse($obat->tanggal_exp);
+$exp = \Carbon\Carbon::parse($batch->tanggal_exp);
 $today = now();
 $diff = $today->diffInDays($exp, false);
 @endphp

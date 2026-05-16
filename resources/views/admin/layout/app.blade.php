@@ -9,6 +9,8 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="{{ asset('css/barcode-scanner.css') }}" rel="stylesheet">
+<link href="{{ asset('css/barcode-print.css') }}" rel="stylesheet">
 
 @stack('styles')
 
@@ -699,7 +701,8 @@ Tidak ada notifikasi
 
 @yield('content')
 
-</div>
+@include('components.barcode-scanner-modal')
+@include('components.barcode-print-modal')
 
 </div>
 
@@ -725,6 +728,10 @@ Tidak ada notifikasi
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<script src="{{ asset('js/barcode-scanner.js') }}"></script>
+<script src="{{ asset('js/barcode-print.js') }}"></script>
 
 @stack('scripts')
 

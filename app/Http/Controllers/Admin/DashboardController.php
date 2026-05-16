@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Obat;
-use App\Models\User;
+use App\Models\StokBatch;
 use App\Models\Supplier;
+use App\Models\User;
 use App\Models\Pembelian;
 use App\Models\Penjualan;
 use Illuminate\Support\Facades\DB;
@@ -107,10 +108,7 @@ class DashboardController extends Controller
         PRIORITAS FEFO
         =============================== */
 
-        $prioritas_fefo = Obat::where('stok', '>', 0)
-            ->orderBy('tanggal_exp', 'asc')
-            ->take(5)
-            ->get();
+        $prioritas_fefo = StokBatch::fefoPriorities(5);
 
 
         return view('admin.dashboard', compact(

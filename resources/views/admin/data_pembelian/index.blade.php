@@ -232,6 +232,47 @@ width:'100%'
 
 });
 
+const adminObatLookupUrl = @json(route('admin.obat.lookup'));
+
+$('#btnPembelianScan').on('click', function () {
+    if (!window.BarcodeScanner) {
+        Swal.fire({ icon: 'error', title: 'Scanner tidak tersedia' });
+        return;
+    }
+
+    BarcodeScanner.open({
+        continuous: false,
+        debounceMs: 1500,
+        onDetected: async function (code) {
+            try {
+                const res = await fetch(adminObatLookupUrl + '?kode=' + encodeURIComponent(code), {
+                    headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Obat tidak ditemukan');
+                }
+
+                $('#obat').val(data.id).trigger('change');
+
+                const detail = data.barcode
+                    ? 'Internal: ' + data.kode_obat + ' · EAN: ' + data.barcode
+                    : 'Kode: ' + data.kode_obat;
+
+                Swal.fire({
+                    icon: 'success',
+                    title: data.nama_obat,
+                    text: detail,
+                    timer: 1500,
+                    showConfirmButton: false,
+                });
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: err.message || 'Scan gagal' });
+            }
+        },
+    });
+});
+
 
 // isi otomatis data obat
 

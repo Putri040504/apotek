@@ -27,4 +27,9 @@ public function obat()
     return $this->belongsTo(Obat::class);
 }
 
+public function batchAllocations()
+{
+    return $this->hasMany(DetailPenjualanBatch::class, 'detail_penjualan_id');
+}
+
 }

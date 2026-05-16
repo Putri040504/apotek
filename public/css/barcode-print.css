@@ -1,0 +1,178 @@
+.barcode-print-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.barcode-print-modal.show {
+    display: flex;
+}
+
+.barcode-print-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.barcode-print-panel {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.barcode-print-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.barcode-print-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.barcode-print-close {
+    border: none;
+    background: #f1f5f9;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.barcode-print-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.barcode-print-controls label {
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.barcode-print-controls input {
+    width: 70px;
+    padding: 6px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+}
+
+.btn-barcode-print {
+    background: #16a34a;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-barcode-print:hover {
+    background: #15803d;
+}
+
+.barcode-print-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+}
+
+.barcode-label {
+    width: 50mm;
+    min-height: 30mm;
+    padding: 4mm;
+    background: #fff;
+    border: 1px dashed #cbd5e1;
+    text-align: center;
+    box-sizing: border-box;
+    page-break-inside: avoid;
+}
+
+.barcode-label-name {
+    font-size: 9pt;
+    font-weight: 600;
+    margin: 0 0 4px;
+    line-height: 1.2;
+    max-height: 2.4em;
+    overflow: hidden;
+}
+
+.barcode-label svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.barcode-label-code {
+    font-size: 10pt;
+    font-family: monospace;
+    margin: 4px 0 0;
+    letter-spacing: 0.05em;
+}
+
+.barcode-label-internal {
+    font-size: 8pt;
+    color: #64748b;
+    margin: 2px 0 0;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #barcodePrintModal.show,
+    #barcodePrintModal.show * {
+        visibility: visible;
+    }
+
+    #barcodePrintModal {
+        display: block !important;
+        position: absolute;
+        inset: 0;
+        padding: 0;
+        background: #fff;
+    }
+
+    .barcode-print-backdrop,
+    .no-print {
+        display: none !important;
+    }
+
+    .barcode-print-panel {
+        box-shadow: none;
+        max-width: none;
+        max-height: none;
+        padding: 0;
+    }
+
+    .barcode-print-preview {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4mm;
+        background: transparent;
+        padding: 0;
+    }
+
+    .barcode-label {
+        border: 1px solid #000;
+    }
+}
