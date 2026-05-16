@@ -76,10 +76,9 @@ COPY --from=frontend /app/public/build ./public/build
 # Jangan jalankan artisan saat build (belum ada .env / DB Dokploy)
 RUN composer dump-autoload --optimize --no-scripts
 
-# Konfigurasi container
-COPY docker/nginx/default.conf /etc/nginx/sites-available/default
-RUN rm -f /etc/nginx/sites-enabled/default \
-    && ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+# Konfigurasi container (conf.d lebih andal di image Docker + nginx apt)
+COPY docker/nginx/default.conf /etc/nginx/conf.d/apotek.conf
+RUN rm -f /etc/nginx/sites-enabled/default /etc/nginx/conf.d/default.conf 2>/dev/null || true
 
 COPY docker/php/custom.ini /usr/local/etc/php/conf.d/99-custom.ini
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf

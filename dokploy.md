@@ -4,7 +4,8 @@
 
 - **Build type:** Dockerfile  
 - **Dockerfile path:** `Dockerfile` (root)  
-- **Port container:** `80`
+- **Port container:** `80` ← **WAJIB** di Dokploy (bukan 3000). Kalau salah → **502 Bad Gateway**
+- **Protocol:** HTTP (SSL di-handle Traefik/Dokploy)
 
 ## Environment variables (wajib)
 
@@ -44,6 +45,13 @@
 
 - `/var/www/html/storage`
 - `/var/www/html/bootstrap/cache`
+
+## 502 Bad Gateway?
+
+1. **Cek Port aplikasi di Dokploy = `80`** (Application → Ports / Domains).
+2. Pastikan container log ada: `nginx entered RUNNING` dan `php-fpm entered RUNNING`.
+3. ENV: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://domain-kamu.com`.
+4. Redeploy setelah push fix terbaru (nginx `conf.d` + php-fpm port 9000).
 
 ## Setelah deploy pertama
 
