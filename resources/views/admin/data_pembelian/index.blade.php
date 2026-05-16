@@ -121,7 +121,7 @@
                                 <td class="text-center">
 
                                     <!-- CETAK -->
-                                    <a href="{{ route('pembelian.cetak', $p->id) }}" class="btn btn-sm btn-outline-primary"
+                                    <a href="{{ route('admin.pembelian.cetak', $p->id) }}" class="btn btn-sm btn-outline-primary"
                                         target="_blank">
 
                                         <i class="bi bi-printer"></i>

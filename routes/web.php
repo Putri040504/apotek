@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\KeranjangController;
 use App\Http\Controllers\Kasir\DashboardController as KasirDashboardController;
 use App\Http\Controllers\Kasir\PenjualanController;
 use App\Http\Controllers\Kasir\ProfileController as KasirProfileController;
+use App\Http\Controllers\ObatLookupController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,7 +37,7 @@ Route::get('/', function () {
         }
 
         if (auth()->user()->role == 'kasir') {
-            return redirect('/kasir/dashboard');
+            return redirect('/kasir/pos');
         }
 
     }
@@ -102,6 +103,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('obat/pdf', [ObatController::class,'pdf'])
         ->name('obat.pdf');
 
+    Route::get('obat/lookup', ObatLookupController::class)
+        ->name('admin.obat.lookup');
+
 
     // SUPPLIER
     Route::resource('supplier', SupplierController::class);
@@ -124,8 +128,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('pembelian/checkout', [PembelianController::class,'checkout'])
         ->name('pembelian.checkout');
     
-    Route::get('pembelian/cetak/{id}', [PembelianController::class, 'cetak'])
-        ->name('pembelian.cetak');
+    Route::get('/admin/pembelian/cetak/{id}', [PembelianController::class,'cetak'])
+        ->name('admin.pembelian.cetak');
 
 
     /*
@@ -229,42 +233,68 @@ Route::get('/penjualan-jenis/pdf', [LaporanController::class,'penjualanJenisPdf'
 
 Route::prefix('kasir')->middleware(['auth'])->group(function () {
 
-    Route::get('/dashboard', [KasirDashboardController::class,'index'])
+    Route::get('/pos', [PenjualanController::class, 'pos'])
+        ->name('kasir.pos');
+
+    Route::get('/obat/search', [PenjualanController::class, 'searchObat'])
+        ->name('kasir.obat.search');
+
+    Route::get('/obat/scan', [PenjualanController::class, 'scanObat'])
+        ->name('kasir.obat.scan');
+
+    Route::get('/dashboard', [KasirDashboardController::class, 'index'])
         ->name('kasir.dashboard');
 
-    Route::get('/penjualan', [PenjualanController::class,'index'])
-        ->name('kasir.penjualan');
+    Route::redirect('/penjualan', '/kasir/riwayat');
 
-    Route::post('/keranjang/store', [PenjualanController::class,'store'])
-        ->name('kasir.keranjang.store');
+    Route::post('/keranjang/store', [PenjualanController::class, 'store'])
+        ->name('keranjang.store');
 
-    Route::delete('/keranjang/{id}', [PenjualanController::class,'destroy'])
-        ->name('kasir.keranjang.destroy');
+    Route::patch('/keranjang/{id}', [PenjualanController::class, 'updateCart'])
+        ->name('keranjang.update');
 
-    Route::post('/penjualan/checkout', [PenjualanController::class,'checkout'])
+    Route::delete('/keranjang', [PenjualanController::class, 'clearCart'])
+        ->name('keranjang.clear');
+
+    Route::delete('/keranjang/{id}', [PenjualanController::class, 'destroy'])
+        ->name('keranjang.destroy');
+
+    Route::post('/penjualan/checkout', [PenjualanController::class, 'checkout'])
         ->name('penjualan.checkout');
 
-    Route::get('/penjualan/cetak/{id}', [PenjualanController::class,'cetak'])
+    Route::post('/penjualan/qris', [PenjualanController::class, 'checkoutQris'])
+        ->name('penjualan.qris');
+
+    Route::get('/penjualan/{id}/status', [PenjualanController::class, 'qrisStatus'])
+        ->name('penjualan.status');
+
+    Route::post('/penjualan/{id}/cancel-qris', [PenjualanController::class, 'cancelQris'])
+        ->name('penjualan.cancel-qris');
+
+    Route::get('/penjualan/cetak/{id}', [PenjualanController::class, 'cetak'])
         ->name('penjualan.cetak');
 
-    Route::get('/riwayat', [PenjualanController::class,'riwayat'])
+    Route::get('/riwayat', [PenjualanController::class, 'riwayat'])
         ->name('riwayat.penjualan');
-    
-    Route::get('/riwayat/detail/{id}', [PenjualanController::class,'detailModal'])
-    ->name('riwayat.detail');
 
-    Route::get('/riwayat/excel',[PenjualanController::class,'exportExcel']);
-    Route::get('/riwayat/pdf',[PenjualanController::class,'exportPDF']);
+    Route::get('/riwayat/detail/{id}', [PenjualanController::class, 'detailModal'])
+        ->name('riwayat.detail');
 
-   Route::get('/profile', [KasirProfileController::class,'index'])
-    ->name('kasir.profile');
+    Route::get('/pembelian/cetak/{id}', [PembelianController::class, 'cetak'])
+        ->name('pembelian.cetak');
 
-Route::post('/profile/update', [KasirProfileController::class,'update'])
-    ->name('kasir.profile.update');
+    Route::get('/riwayat/excel', [PenjualanController::class, 'exportExcel']);
+    Route::get('/riwayat/pdf', [PenjualanController::class, 'exportPDF']);
 
-     
+    Route::get('/profile', [KasirProfileController::class, 'index'])
+        ->name('kasir.profile');
 
+    Route::post('/profile/update', [KasirProfileController::class, 'update'])
+        ->name('kasir.profile.update');
 });
+
+Route::post('/kasir/midtrans/notification', [PenjualanController::class, 'midtransNotification'])
+    ->name('midtrans.notification');
  
  
 require __DIR__.'/auth.php';
