@@ -10,9 +10,9 @@ return new class extends Migration
     public function up(): void
     {
         $dupes = DB::table('obats')
-            ->select('kode_obat', DB::raw('COUNT(*) as c'))
+            ->select('kode_obat')
             ->groupBy('kode_obat')
-            ->having('c', '>', 1)
+            ->havingRaw('COUNT(*) > 1')
             ->pluck('kode_obat');
 
         foreach ($dupes as $kode) {
