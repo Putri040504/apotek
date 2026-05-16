@@ -48,10 +48,25 @@
 
 ## 502 Bad Gateway?
 
-1. **Cek Port aplikasi di Dokploy = `80`** (Application → Ports / Domains).
-2. Pastikan container log ada: `nginx entered RUNNING` dan `php-fpm entered RUNNING`.
-3. ENV: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://domain-kamu.com`.
-4. Redeploy setelah push fix terbaru (nginx `conf.d` + php-fpm port 9000).
+1. **Port container = `80`** (sudah benar di screenshot kamu).
+2. Klik **Validate DNS** (kuning) — domain harus A record ke IP server Dokploy.
+3. Log harus ada: `apache entered RUNNING` dan `HTTP self-test OK`.
+4. ENV wajib:
+   ```
+   APP_ENV=production
+   APP_DEBUG=false
+   APP_URL=https://apotek-zema.putri.ngedeploy.online
+   ```
+5. Image pakai **Apache** (bukan nginx+fpm) — push & **rebuild** penuh di Dokploy.
+
+### Tes di Terminal Dokploy (container)
+
+```bash
+curl -I http://127.0.0.1/up
+curl -I http://127.0.0.1/
+```
+
+Kalau di dalam container **200** tapi browser **502** → masalah DNS/SSL/domain Dokploy, bukan Laravel.
 
 ## Setelah deploy pertama
 

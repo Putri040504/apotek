@@ -44,6 +44,7 @@ if [ "$APP_ENV" = "production" ] || [ "$RUN_OPTIMIZE" = "true" ]; then
     php artisan view:cache
 fi
 
-echo "[entrypoint] Ready. Starting supervisord..."
+echo "[entrypoint] Starting supervisord (Apache listens on 0.0.0.0:80)..."
+echo "[entrypoint] Setelah deploy: curl http://127.0.0.1/up di Terminal Dokploy untuk tes"
 
 exec "$@"
