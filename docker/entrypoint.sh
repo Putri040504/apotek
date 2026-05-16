@@ -5,6 +5,9 @@ cd /var/www/html
 
 echo "[entrypoint] Apotek Zema — starting..."
 
+# Discover packages setelah .env runtime tersedia
+php artisan package:discover --ansi 2>/dev/null || true
+
 # Pastikan folder writable
 mkdir -p storage/framework/{sessions,views,cache/data} storage/logs bootstrap/cache
 chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true

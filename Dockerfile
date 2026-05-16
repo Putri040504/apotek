@@ -25,7 +25,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     COMPOSER_ALLOW_SUPERUSER=1 \
     APP_ENV=production
 
-# System packages + PHP extensions (MySQL, GD, ZIP untuk DomPDF & Excel)
+# System packages + PHP extensions (MySQL, PostgreSQL, GD, ZIP)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     nginx \
     supervisor \
@@ -38,9 +38,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libzip-dev \
     libonig-dev \
     libxml2-dev \
+    libpq-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j"$(nproc)" \
         pdo_mysql \
+        pdo_pgsql \
         mbstring \
         exif \
         pcntl \
@@ -71,8 +73,8 @@ COPY . .
 # Asset hasil build Vite
 COPY --from=frontend /app/public/build ./public/build
 
-RUN composer dump-autoload --optimize \
-    && php artisan package:discover --ansi
+# Jangan jalankan artisan saat build (belum ada .env / DB Dokploy)
+RUN composer dump-autoload --optimize --no-scripts
 
 # Konfigurasi container
 COPY docker/nginx/default.conf /etc/nginx/sites-available/default

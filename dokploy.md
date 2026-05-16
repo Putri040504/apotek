@@ -11,11 +11,11 @@
 | Variable | Contoh |
 |----------|--------|
 | `APP_NAME` | Apotek Zema |
-| `APP_ENV` | production |
+| `APP_ENV` | **production** (jangan `local` di server) |
 | `APP_KEY` | base64:... (generate: `php artisan key:generate --show`) |
-| `APP_DEBUG` | false |
+| `APP_DEBUG` | **false** |
 | `APP_URL` | https://apotek.domainkamu.com |
-| `DB_CONNECTION` | mysql |
+| `DB_CONNECTION` | `pgsql` atau `mysql` (sesuai database Dokploy) |
 | `DB_HOST` | host database Dokploy / eksternal |
 | `DB_PORT` | 3306 |
 | `DB_DATABASE` | apotek_zema |
