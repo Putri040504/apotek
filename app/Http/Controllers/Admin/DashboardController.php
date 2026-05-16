@@ -45,12 +45,9 @@ class DashboardController extends Controller
         DATA OBAT
         =============================== */
 
-        $obat_kadaluarsa = Obat::whereDate('tanggal_exp', '<', now())->count();
+        $obat_kadaluarsa = StokBatch::expired()->distinct()->count('obat_id');
 
-        $obat_hampir_kadaluarsa = Obat::whereDate('tanggal_exp', '<=', now()->addDays(30))
-            ->orderBy('tanggal_exp', 'asc')
-            ->take(5)
-            ->get();
+        $obat_hampir_kadaluarsa = StokBatch::nearExpiryBatches(5);
 
         $stok_menipis = Obat::where('stok', '<', 10)
             ->take(5)

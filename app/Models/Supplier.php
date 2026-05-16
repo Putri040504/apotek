@@ -17,9 +17,9 @@ class Supplier extends Model
         'no_telp'
     ];
 
-    public function obat()
+    public function stokBatches()
     {
-        return $this->hasMany(Obat::class,'supplier_id');
+        return $this->hasMany(StokBatch::class, 'supplier_id');
     }
 
 }

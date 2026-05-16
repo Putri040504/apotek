@@ -110,7 +110,15 @@
 
                                 <td class="text-start">{{ optional($d->obat)->nama_obat ?? '-' }}</td>
 
-                                <td class="text-center">{{ optional($d->obat)->tanggal_exp ?? '-' }}</td>
+                                <td class="text-center">
+                                    @php
+                                        $batchExp = $d->obat?->stokBatches
+                                            ?->where('supplier_id', $p->supplier_id)
+                                            ->sortBy('tanggal_exp')
+                                            ->first();
+                                    @endphp
+                                    {{ $batchExp?->tanggal_exp?->format('d-m-Y') ?? '-' }}
+                                </td>
 
                                 <td class="text-end">Rp {{ number_format($d->harga) }}</td>
 

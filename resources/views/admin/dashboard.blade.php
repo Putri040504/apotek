@@ -330,13 +330,14 @@
 
                     <ul class="list-group list-group-flush small">
 
-                        @foreach ($obat_hampir_kadaluarsa as $obat)
+                        @foreach ($obat_hampir_kadaluarsa as $batch)
                             <li class="list-group-item d-flex justify-content-between">
 
-                                {{ $obat->nama_obat }}
+                                {{ $batch->obat->nama_obat ?? '-' }}
 
                                 <span class="badge bg-warning text-dark">
-                                    {{ \Carbon\Carbon::parse($obat->tanggal_exp)->format('d M Y') }}
+                                    {{ $batch->tanggal_exp?->format('d M Y') }}
+                                    ({{ $batch->jumlah }} pcs)
                                 </span>
 
                             </li>

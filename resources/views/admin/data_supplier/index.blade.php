@@ -72,10 +72,13 @@
                             <td>{{ $s->nama_supplier }}</td>
 
                             <td>
-                                @forelse($s->obat as $o)
-                                    {{ $o->nama_obat }} <br>
+                                @php
+                                    $namaObat = $s->stokBatches->pluck('obat.nama_obat')->filter()->unique();
+                                @endphp
+                                @forelse($namaObat as $nama)
+                                    {{ $nama }}<br>
                                 @empty
-                                    -
+                                    {{ $s->nama_obat ?? '-' }}
                                 @endforelse
                             </td>
 

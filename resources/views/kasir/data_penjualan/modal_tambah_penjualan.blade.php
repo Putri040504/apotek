@@ -74,9 +74,10 @@
                                 <option value="">Pilih Obat</option>
 
                                 @foreach ($obat as $o)
-                                    @if (\Carbon\Carbon::parse($o->tanggal_exp)->isFuture())
+                                    @if ($o->isSellable())
                                         <option value="{{ $o->id }}" data-harga="{{ $o->harga_jual }}"
-                                            data-exp="{{ $o->tanggal_exp }}" data-stok="{{ $o->stok }}">
+                                            data-exp="{{ $o->fefoBatch()?->tanggal_exp?->format('Y-m-d') }}"
+                                            data-stok="{{ $o->sellableStock() }}">
 
                                             {{ $o->nama_obat }}
 

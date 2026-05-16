@@ -19,7 +19,13 @@
 
                 <td>{{ $d->obat->nama_obat }}</td>
 
-                <td>{{ date('d-m-Y', strtotime($d->obat->tanggal_exp)) }}</td>
+                <td>
+                    @php
+                        $exp = $d->batchAllocations->first()?->stokBatch?->tanggal_exp
+                            ?? $d->obat?->earliestExpiryBatch()?->tanggal_exp;
+                    @endphp
+                    {{ $exp?->format('d-m-Y') ?? '-' }}
+                </td>
 
                 <td>Rp {{ number_format($d->harga, 0, ',', '.') }}</td>
 

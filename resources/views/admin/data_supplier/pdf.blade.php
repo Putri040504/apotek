@@ -72,7 +72,9 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $s->kode_supplier }}</td>
                     <td>{{ $s->nama_supplier }}</td>
-                    <td>{{ $s->obat->nama_obat ?? '-' }}</td>
+                    <td>
+                        {{ $s->stokBatches->pluck('obat.nama_obat')->filter()->unique()->implode(', ') ?: ($s->nama_obat ?? '-') }}
+                    </td>
                     <td>{{ $s->alamat }}</td>
                     <td>{{ $s->email }}</td>
                     <td>{{ $s->no_telp }}</td>

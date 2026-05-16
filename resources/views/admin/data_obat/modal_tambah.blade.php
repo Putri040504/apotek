@@ -20,9 +20,10 @@
 
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Kode Obat</label>
-                            <input type="text" name="kode_obat" id="tambahKodeObat"
-                                value="{{ 'OB' . str_pad($obat->count() + 1, 3, '0', STR_PAD_LEFT) }}"
+                            <input type="text" id="tambahKodeObat"
+                                value="{{ $nextKodeObat }}"
                                 class="form-control bg-light" readonly style="cursor:not-allowed">
+                            <small class="text-muted d-block mt-1">Dibuat otomatis server (nomor OB tertinggi + 1).</small>
                             <button type="button" class="btn btn-sm btn-outline-secondary mt-1"
                                 id="btnPreviewBarcodeTambah">
                                 <i class="bi bi-upc"></i> Preview / Cetak Barcode

@@ -328,16 +328,17 @@
 
                         <tbody>
 
-                            @forelse($obat_akan_expired ?? [] as $o)
+                            @forelse($obat_akan_expired ?? [] as $batch)
                                 @php
-                                    $exp = \Carbon\Carbon::parse($o->tanggal_exp);
+                                    $exp = $batch->tanggal_exp;
+                                    $nama = $batch->obat->nama_obat ?? '-';
                                 @endphp
 
                                 <tr>
 
                                     <td>{{ $loop->iteration }}</td>
-                                    <td class="text-start">{{ $o->nama_obat }}</td>
-                                    <td>{{ $o->stok }}</td>
+                                    <td class="text-start">{{ $nama }}</td>
+                                    <td>{{ $batch->jumlah }}</td>
 
                                     <td
                                         class="
@@ -408,11 +409,11 @@ text-warning fw-bold @endif
                                     <td class="text-start">{{ $o->nama_obat }}</td>
                                     <td class="text-danger fw-bold">{{ $o->stok }}</td>
                                     @php
-                                        $exp = \Carbon\Carbon::parse($o->tanggal_exp);
+                                        $exp = $o->earliestExpiryBatch()?->tanggal_exp;
                                     @endphp
 
-                                    <td class="@if ($exp->isPast()) text-danger fw-bold @endif">
-                                        {{ $exp->format('d-m-Y') }}
+                                    <td class="@if ($exp && $exp->isPast()) text-danger fw-bold @endif">
+                                        {{ $exp?->format('d-m-Y') ?? '—' }}
                                     </td>
 
                                 </tr>

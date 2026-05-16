@@ -16,7 +16,7 @@ class SupplierController extends Controller
 
     public function index()
 {
-    $supplier = Supplier::with('obat')->get();
+    $supplier = Supplier::with('stokBatches.obat')->get();
     $obat = Obat::all();
 
     return view('admin.data_supplier.index', compact('supplier','obat'));
@@ -94,7 +94,7 @@ class SupplierController extends Controller
 
 public function pdf()
 {
-    $supplier = Supplier::with('obat')->get();
+    $supplier = Supplier::with('stokBatches.obat')->get();
 
     $pdf = Pdf::loadView('admin.data_supplier.pdf', compact('supplier'));
 

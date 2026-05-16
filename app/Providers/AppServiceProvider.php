@@ -2,8 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\Obat;
-use Carbon\Carbon;
+use App\Services\StockAlertService;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -19,8 +18,6 @@ class AppServiceProvider extends ServiceProvider
     {
         $empty = collect();
 
-        // Jangan query DB saat artisan (migrate, package:discover, queue, dll.)
-        // — penting agar Docker build tidak butuh database.
         if ($this->app->runningInConsole()) {
             View::share([
                 'stok_habis' => $empty,
@@ -33,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         try {
-            if (! Schema::hasTable('obats')) {
+            if (! Schema::hasTable('obats') || ! Schema::hasTable('stok_batches')) {
                 View::share([
                     'stok_habis' => $empty,
                     'stok_menipis' => $empty,
@@ -44,21 +41,11 @@ class AppServiceProvider extends ServiceProvider
                 return;
             }
 
-            $today = Carbon::today();
-
-            $stok_habis = Obat::where('stok', 0)->get();
-            $stok_menipis = Obat::whereBetween('stok', [1, 5])->get();
-            $obat_hampir_expired = Obat::whereBetween('tanggal_exp', [
-                $today,
-                $today->copy()->addDays(30),
-            ])->get();
-            $obat_expired = Obat::whereDate('tanggal_exp', '<', $today)->get();
-
             View::share([
-                'stok_habis' => $stok_habis,
-                'stok_menipis' => $stok_menipis,
-                'obat_hampir_expired' => $obat_hampir_expired,
-                'obat_expired' => $obat_expired,
+                'stok_habis' => StockAlertService::outOfStock(),
+                'stok_menipis' => StockAlertService::lowStock(),
+                'obat_hampir_expired' => StockAlertService::nearExpiryBatches(),
+                'obat_expired' => StockAlertService::expiredBatches(),
             ]);
         } catch (\Throwable) {
             View::share([

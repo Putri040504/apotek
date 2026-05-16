@@ -12,6 +12,11 @@ class Keranjang extends Model
         'supplier_id',
         'obat_id',
         'qty',
+        'tanggal_exp',
+    ];
+
+    protected $casts = [
+        'tanggal_exp' => 'date',
     ];
 
     public function obat()

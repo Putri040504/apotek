@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use RuntimeException;
 
+/**
+ * Master obat (identitas & harga). Stok & kadaluarsa hanya di {@see StokBatch}.
+ *
+ * Kolom `stok` di obats = ringkasan total batch, di-sync lewat {@see syncFromBatches()}.
+ */
 class Obat extends Model
 {
     public const MIN_DAYS_BEFORE_EXPIRY = 30;
@@ -18,30 +23,21 @@ class Obat extends Model
         'barcode',
         'nama_obat',
         'kategori_id',
-        'supplier_id',
-        'tanggal_exp',
         'stok',
         'harga_beli',
         'harga_jual',
     ];
 
     protected $casts = [
-        'tanggal_exp' => 'date',
         'stok' => 'integer',
         'harga_beli' => 'integer',
         'harga_jual' => 'integer',
         'kategori_id' => 'integer',
-        'supplier_id' => 'integer',
     ];
 
     public function kategori()
     {
         return $this->belongsTo(Kategori::class, 'kategori_id');
-    }
-
-    public function supplier()
-    {
-        return $this->belongsTo(Supplier::class, 'supplier_id');
     }
 
     public function keranjang()
@@ -89,6 +85,39 @@ class Obat extends Model
                 ->orWhere('kode_obat', 'like', "%{$term}%")
                 ->orWhere('barcode', 'like', "%{$term}%");
         });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Kode obat internal (OB001, OB002, …)
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Kode berikutnya berdasarkan nomor OB tertinggi di database (bukan jumlah baris).
+     * Contoh: sudah ada OB001–OB006 → mengembalikan OB007 meski hanya 5 baris tersisa.
+     */
+    public static function generateNextKodeObat(): string
+    {
+        $max = static::query()
+            ->pluck('kode_obat')
+            ->map(function (string $kode) {
+                if (preg_match('/^OB(\d+)$/i', trim($kode), $m)) {
+                    return (int) $m[1];
+                }
+
+                return 0;
+            })
+            ->max() ?? 0;
+
+        $next = $max + 1;
+
+        do {
+            $kode = 'OB'.str_pad((string) $next, 3, '0', STR_PAD_LEFT);
+            $next++;
+        } while (static::where('kode_obat', $kode)->exists());
+
+        return $kode;
     }
 
     /*
@@ -154,9 +183,21 @@ class Obat extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | Batch & cache (stok / tanggal_exp di obats = ringkasan)
+    | Batch & ringkasan stok
     |--------------------------------------------------------------------------
     */
+
+    /** Batch FEFO pertama yang masih boleh dijual */
+    public function fefoBatch(): ?StokBatch
+    {
+        return $this->stokBatches()->sellable()->orderFefo()->first();
+    }
+
+    /** Batch dengan stok > 0, expired terdekat (untuk tampilan) */
+    public function earliestExpiryBatch(): ?StokBatch
+    {
+        return $this->stokBatches()->hasStock()->orderFefo()->first();
+    }
 
     public function totalStokFromBatches(): int
     {
@@ -168,38 +209,46 @@ class Obat extends Model
         return (int) $this->stokBatches()->sellable()->sum('jumlah');
     }
 
-    /** Sinkronkan kolom stok & tanggal_exp di master dari batch */
+    /** Sinkronkan kolom stok di master dari total batch */
     public function syncFromBatches(): void
     {
-        $total = $this->totalStokFromBatches();
-        $earliest = $this->stokBatches()
-            ->hasStock()
-            ->orderFefo()
-            ->value('tanggal_exp');
-
         $this->forceFill([
-            'stok' => $total,
-            'tanggal_exp' => $earliest ?? $this->tanggal_exp,
+            'stok' => $this->totalStokFromBatches(),
         ])->saveQuietly();
     }
 
     /**
-     * Tambah stok ke batch (merge jika tanggal_exp sama).
+     * Tambah stok ke batch (merge jika tanggal_exp sama pada obat yang sama).
      */
-    public function addBatch(int $quantity, $tanggalExp, ?int $hargaBeli = null): StokBatch
-    {
+    public function addBatch(
+        int $quantity,
+        $tanggalExp,
+        ?int $hargaBeli = null,
+        ?int $supplierId = null
+    ): StokBatch {
         $exp = Carbon::parse($tanggalExp)->toDateString();
         $hargaBeli = $hargaBeli ?? $this->harga_beli ?? 0;
 
         $batch = $this->stokBatches()->firstOrCreate(
             ['tanggal_exp' => $exp],
-            ['jumlah' => 0, 'harga_beli' => $hargaBeli]
+            [
+                'jumlah' => 0,
+                'harga_beli' => $hargaBeli,
+                'supplier_id' => $supplierId,
+            ]
         );
 
         $batch->increment('jumlah', $quantity);
 
+        $updates = [];
         if ($hargaBeli > 0 && $batch->harga_beli === 0) {
-            $batch->update(['harga_beli' => $hargaBeli]);
+            $updates['harga_beli'] = $hargaBeli;
+        }
+        if ($supplierId && ! $batch->supplier_id) {
+            $updates['supplier_id'] = $supplierId;
+        }
+        if ($updates !== []) {
+            $batch->update($updates);
         }
 
         $this->syncFromBatches();
@@ -363,10 +412,13 @@ class Obat extends Model
         return $this->decreaseStockFefo($quantity);
     }
 
-    public function increaseStock(int $quantity): void
+    public function increaseStock(int $quantity, ?string $tanggalExp = null, ?int $supplierId = null): void
     {
-        $exp = $this->tanggal_exp ?? now()->addYear()->toDateString();
-        $this->addBatch($quantity, $exp, $this->harga_beli);
+        $exp = $tanggalExp
+            ?? $this->earliestExpiryBatch()?->tanggal_exp?->toDateString()
+            ?? now()->addYear()->toDateString();
+
+        $this->addBatch($quantity, $exp, $this->harga_beli, $supplierId);
     }
 
     public function toLookupArray(): array
@@ -397,7 +449,7 @@ class Obat extends Model
             'stok_total' => $this->totalStokFromBatches(),
             'harga_jual' => $this->harga_jual,
             'harga_jual_formatted' => 'Rp '.number_format($this->harga_jual, 0, ',', '.'),
-            'tanggal_exp' => $fefoBatch?->tanggal_exp?->format('Y-m-d') ?? $this->tanggal_exp?->format('Y-m-d'),
+            'tanggal_exp' => $fefoBatch?->tanggal_exp?->format('Y-m-d'),
             'tanggal_exp_fefo' => $fefoBatch?->tanggal_exp?->format('Y-m-d'),
             'batch_count' => $this->stokBatches()->hasStock()->count(),
             'days_until_expiry' => $this->daysUntilExpiry(),

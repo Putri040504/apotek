@@ -15,7 +15,7 @@ class ObatExport implements FromCollection, WithHeadings, WithMapping, WithEvent
 
     public function collection()
     {
-        return Obat::with('kategori')->get();
+        return Obat::with(['kategori', 'stokBatches' => fn ($q) => $q->hasStock()->orderFefo()])->get();
     }
 
     public function headings(): array
@@ -44,7 +44,7 @@ class ObatExport implements FromCollection, WithHeadings, WithMapping, WithEvent
             $obat->kode_obat,
             $obat->nama_obat,
             $obat->kategori->nama_kategori,
-            $obat->tanggal_exp,
+            $obat->earliestExpiryBatch()?->tanggal_exp?->format('Y-m-d') ?? '-',
             $obat->stok,
             'Rp ' . number_format($obat->harga_beli,0,',','.'),
             'Rp ' . number_format($obat->harga_jual,0,',','.')

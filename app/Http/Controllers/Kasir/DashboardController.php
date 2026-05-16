@@ -58,20 +58,15 @@ $obat_stok_menipis = Obat::where('stok','>',0)
 // MONITORING EXPIRED
 // ============================
 
-// OBAT AKAN EXPIRED (6 bulan)
+// Batch hampir kadaluarsa (30 hari) & sudah expired — sumber: stok_batches
 
-$obat_akan_expired = Obat::whereDate('tanggal_exp','<=',Carbon::now()->addMonths(6))
-->whereDate('tanggal_exp','>=',Carbon::now())
-->orderBy('tanggal_exp','asc')
-->limit(5)
-->get();
+$obat_akan_expired = StokBatch::nearExpiryBatches(5, 30);
 
-
-// OBAT SUDAH EXPIRED
-
-$obat_expired = Obat::whereDate('tanggal_exp','<',Carbon::now())
-->limit(5)
-->get();
+$obat_expired = StokBatch::with('obat')
+    ->expired()
+    ->orderFefo()
+    ->limit(5)
+    ->get();
 
 
 // ============================

@@ -25,7 +25,7 @@ class RiwayatPenjualanExport implements FromCollection, WithHeadings, WithEvents
     public function collection()
     {
 
-        $query = Penjualan::with('detail.obat');
+        $query = Penjualan::with(['detail.obat', 'detail.batchAllocations.stokBatch']);
 
         if($this->bulan){
             $query->whereMonth('tanggal',$this->bulan);
@@ -49,7 +49,8 @@ class RiwayatPenjualanExport implements FromCollection, WithHeadings, WithEvents
                     $p->no_transaksi,
                     \Carbon\Carbon::parse($p->tanggal)->translatedFormat('d F Y'),
                     $d->obat?->nama_obat ?? '-',
-                    $d->obat?->tanggal_exp ? date('d-m-Y', strtotime($d->obat->tanggal_exp)) : '-',
+                    ($d->batchAllocations->first()?->stokBatch?->tanggal_exp
+                        ?? $d->obat?->earliestExpiryBatch()?->tanggal_exp)?->format('d-m-Y') ?? '-',
                     $d->harga,
                     $d->jumlah,
                     $d->subtotal

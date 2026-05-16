@@ -94,7 +94,7 @@
                             <td>{{ $o->nama_obat }}</td>
 
                             <td>
-                                {{ $o->tanggal_exp?->format('d-m-Y') ?? '-' }}
+                                {{ $o->earliestExpiryBatch()?->tanggal_exp?->format('d-m-Y') ?? '-' }}
                                 @if ($o->stokBatches->where('jumlah', '>', 0)->count() > 1)
                                     <small
                                         class="text-muted d-block">{{ $o->stokBatches->where('jumlah', '>', 0)->count() }}
@@ -149,7 +149,6 @@
 
                         </tr>
 
-                        @include('admin.data_obat.modal_edit')
                     @endforeach
 
                 </tbody>
@@ -158,6 +157,10 @@
 
         </div>
     </div>
+
+    @foreach ($obat as $o)
+        @include('admin.data_obat.modal_edit')
+    @endforeach
 
     @include('admin.data_obat.modal_tambah')
 

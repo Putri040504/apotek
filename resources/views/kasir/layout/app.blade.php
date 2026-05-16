@@ -258,11 +258,11 @@
 
                         <i class="bi bi-bell fs-5"></i>
 
-                        @if (($stok_habis->count() ?? 0) + ($obat_expired->count() ?? 0) > 0)
+                        @if (($stok_habis->count() ?? 0) + ($obat_hampir_expired->count() ?? 0) + ($obat_expired->count() ?? 0) > 0)
                             <span
                                 class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
 
-                                {{ ($stok_habis->count() ?? 0) + ($obat_expired->count() ?? 0) }}
+                                {{ ($stok_habis->count() ?? 0) + ($obat_hampir_expired->count() ?? 0) + ($obat_expired->count() ?? 0) }}
 
                             </span>
                         @endif
@@ -287,27 +287,48 @@
                         @endif
 
 
-                        @if (isset($obat_expired) && $obat_expired->count() > 0)
+                        @if (isset($obat_hampir_expired) && $obat_hampir_expired->count() > 0)
 
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
 
                             <li class="dropdown-header text-warning">
-                                Hampir Expired
+                                Hampir Kadaluarsa
                             </li>
 
-                            @foreach ($obat_expired as $obat)
+                            @foreach ($obat_hampir_expired as $batch)
                                 <li class="dropdown-item text-warning">
                                     <i class="bi bi-clock-history"></i>
-                                    {{ $obat->nama_obat }} - Exp {{ $obat->tanggal_exp }}
+                                    {{ $batch->obat->nama_obat ?? '-' }} — Exp {{ $batch->tanggal_exp?->format('d/m/Y') }}
+                                    ({{ $batch->jumlah }} pcs)
+                                </li>
+                            @endforeach
+
+                        @endif
+
+                        @if (isset($obat_expired) && $obat_expired->count() > 0)
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+                            <li class="dropdown-header text-danger">
+                                Sudah Kadaluarsa
+                            </li>
+
+                            @foreach ($obat_expired as $batch)
+                                <li class="dropdown-item text-danger">
+                                    <i class="bi bi-exclamation-octagon"></i>
+                                    {{ $batch->obat->nama_obat ?? '-' }} — Exp {{ $batch->tanggal_exp?->format('d/m/Y') }}
+                                    ({{ $batch->jumlah }} pcs)
                                 </li>
                             @endforeach
 
                         @endif
 
 
-                        @if (($stok_habis->count() ?? 0) == 0 && ($obat_expired->count() ?? 0) == 0)
+                        @if (($stok_habis->count() ?? 0) == 0 && ($obat_hampir_expired->count() ?? 0) == 0 && ($obat_expired->count() ?? 0) == 0)
                             <li class="dropdown-item text-muted">
                                 Tidak ada notifikasi
                             </li>

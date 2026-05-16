@@ -22,7 +22,7 @@
 
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Kode Obat</label>
-                            <input type="text" name="kode_obat" value="{{ $o->kode_obat }}"
+                            <input type="text" value="{{ $o->kode_obat }}"
                                 class="form-control bg-light" readonly style="cursor:not-allowed">
                         </div>
 
@@ -30,7 +30,7 @@
                             <label class="form-label">Barcode Kemasan (EAN)</label>
                             <div class="input-group">
                                 <input type="text" name="barcode" id="editBarcode{{ $o->id }}"
-                                    class="form-control" value="{{ $o->barcode }}" placeholder="8991234567890"
+                                    class="form-control" value="{{ old('barcode', $o->barcode) }}" placeholder="8991234567890"
                                     maxlength="50" inputmode="numeric" autocomplete="off">
                                 <button type="button" class="btn btn-outline-primary btn-scan-barcode-edit"
                                     data-target="#editBarcode{{ $o->id }}" title="Scan dari kemasan">
@@ -64,14 +64,16 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Tanggal Exp</label>
-                            <input type="date" name="tanggal_exp" value="{{ $o->tanggal_exp }}"
-                                class="form-control">
+                            <label class="form-label">Exp terdekat (batch)</label>
+                            <input type="text" class="form-control"
+                                value="{{ $o->earliestExpiryBatch()?->tanggal_exp?->format('d-m-Y') ?? '—' }}"
+                                readonly disabled>
+                            <small class="text-muted d-block">Ubah stok/exp lewat Pembelian</small>
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Stok</label>
-                            <input type="number" name="stok" value="{{ $o->stok }}" class="form-control">
+                            <label class="form-label">Stok total</label>
+                            <input type="text" class="form-control" value="{{ $o->stok }}" readonly disabled>
                         </div>
 
                         <div class="col-md-6 mb-3">
@@ -92,7 +94,7 @@
 
                 <div class="modal-footer">
 
-                    <button class="btn btn-success btn-sm">
+                    <button type="submit" class="btn btn-success btn-sm">
                         <i class="bi bi-save"></i> Update
                     </button>
 
