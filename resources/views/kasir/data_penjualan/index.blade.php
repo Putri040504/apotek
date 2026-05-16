@@ -1,347 +1,333 @@
 @extends('kasir.layout.app')
 
 @section('title')
-Data Penjualan
+    Data Penjualan
 @endsection
 
-@if(session('success'))
-<script>
-document.addEventListener("DOMContentLoaded", function(){
-Swal.fire({
-icon:'success',
-title:'Berhasil',
-text:'{{ session('success') }}',
-timer:2000,
-showConfirmButton:false
-});
-});
-</script>
+@if (session('success'))
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: '{{ session('success') }}',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        });
+    </script>
 @endif
 
-@if(session('error'))
-<script>
-document.addEventListener("DOMContentLoaded", function(){
-Swal.fire({
-icon:'error',
-title:'Gagal',
-text:'{{ session('error') }}'
-});
-});
-</script>
+@if (session('error'))
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: '{{ session('error') }}'
+            });
+        });
+    </script>
 @endif
 
 @section('content')
+    <style>
+        #tabelPenjualan {
+            font-size: 13px;
+        }
 
-<style>
+        #tabelPenjualan th {
+            font-size: 12px;
+            padding: 6px;
+        }
+
+        #tabelPenjualan td {
+            padding: 5px;
+        }
+
+        /* HEADER TABEL HIJAU */
+
+        #tabelPenjualan thead th {
+            background-color: #198754;
+            color: white;
+            text-align: center;
+        }
+
+        /* HOVER ROW */
 
-#tabelPenjualan{
-font-size:13px;
-}
+        #tabelPenjualan tbody tr:hover {
+            background: #e9f7ef;
+        }
 
-#tabelPenjualan th{
-font-size:12px;
-padding:6px;
-}
+        /* FOCUS INPUT JADI HIJAU */
 
-#tabelPenjualan td{
-padding:5px;
-}
+        .form-control:focus {
+            border-color: #198754;
+            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+        }
 
-/* HEADER TABEL HIJAU */
+        /* SEARCH DATATABLE */
 
-#tabelPenjualan thead th{
-background-color:#198754;
-color:white;
-text-align:center;
-}
+        .dataTables_filter input {
+            border: 1px solid #198754;
+        }
 
-/* HOVER ROW */
+        .dataTables_filter input:focus {
+            border-color: #198754;
+            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+        }
 
-#tabelPenjualan tbody tr:hover{
-background:#e9f7ef;
-}
+        /* SELECT DATATABLE */
 
-/* FOCUS INPUT JADI HIJAU */
+        .dataTables_length select {
+            border: 1px solid #198754;
+        }
 
-.form-control:focus{
-border-color:#198754;
-box-shadow:0 0 0 0.2rem rgba(25,135,84,0.25);
-}
+        .dataTables_length select:focus {
+            border-color: #198754;
+            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+        }
 
-/* SEARCH DATATABLE */
+        /* PAGINATION */
 
-.dataTables_filter input{
-border:1px solid #198754;
-}
+        .page-item.active .page-link {
+            background: #198754;
+            border-color: #198754;
+        }
 
-.dataTables_filter input:focus{
-border-color:#198754;
-box-shadow:0 0 0 0.2rem rgba(25,135,84,0.25);
-}
+        .page-link {
+            color: #198754;
+        }
 
-/* SELECT DATATABLE */
+        .page-link:hover {
+            color: #146c43;
+        }
 
-.dataTables_length select{
-border:1px solid #198754;
-}
+        /* TOMBOL PRINT JADI HIJAU */
 
-.dataTables_length select:focus{
-border-color:#198754;
-box-shadow:0 0 0 0.2rem rgba(25,135,84,0.25);
-}
+        .btn-outline-primary {
+            border-color: #198754;
+            color: #198754;
+        }
 
-/* PAGINATION */
+        .btn-outline-primary:hover {
+            background: #198754;
+            color: white;
+        }
 
-.page-item.active .page-link{
-background:#198754;
-border-color:#198754;
-}
+        /* TOMBOL KERANJANG JADI MERAH */
 
-.page-link{
-color:#198754;
-}
+        .btn-cart {
+            background: #dc3545 !important;
+            border-color: #dc3545 !important;
+            color: white !important;
+        }
 
-.page-link:hover{
-color:#146c43;
-}
+        .btn-cart:hover {
+            background: #bb2d3b !important;
+            border-color: #b02a37 !important;
+            color: white !important;
+        }
 
-/* TOMBOL PRINT JADI HIJAU */
+        /* PAGINATION DATATABLE HIJAU */
 
-.btn-outline-primary{
-border-color:#198754;
-color:#198754;
-}
+        .page-link {
+            color: #198754 !important;
+        }
 
-.btn-outline-primary:hover{
-background:#198754;
-color:white;
-}
+        .page-link:hover {
+            background: #198754 !important;
+            color: white !important;
+            border-color: #198754 !important;
+        }
 
-/* TOMBOL KERANJANG JADI MERAH */
+        .page-item.active .page-link {
+            background: #198754 !important;
+            border-color: #198754 !important;
+            color: white !important;
+        }
 
-.btn-cart{
-background:#dc3545 !important;
-border-color:#dc3545 !important;
-color:white !important;
-}
+        /* hilangkan biru focus */
 
-.btn-cart:hover{
-background:#bb2d3b !important;
-border-color:#b02a37 !important;
-color:white !important;
-}
+        .page-link:focus {
+            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
+        }
+    </style>
 
-/* PAGINATION DATATABLE HIJAU */
 
-.page-link{
-color:#198754 !important;
-}
+    <div class="d-flex justify-content-end align-items-center mb-3">
 
-.page-link:hover{
-background:#198754 !important;
-color:white !important;
-border-color:#198754 !important;
-}
+        <div>
 
-.page-item.active .page-link{
-background:#198754 !important;
-border-color:#198754 !important;
-color:white !important;
-}
+            <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#modalTambah">
+                <i class="bi bi-plus-circle"></i> Tambah Data
+            </button>
 
-/* hilangkan biru focus */
+            <button class="btn btn-cart position-relative" data-bs-toggle="modal" data-bs-target="#modalKeranjang">
 
-.page-link:focus{
-box-shadow:0 0 0 0.2rem rgba(25,135,84,0.25) !important;
-}
+                <i class="bi bi-cart3"></i>
 
+                @if ($keranjang->count() > 0)
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
+                        {{ $keranjang->count() }}
+                    </span>
+                @endif
 
-</style>
+            </button>
 
+        </div>
 
-<div class="d-flex justify-content-end align-items-center mb-3">
+    </div>
 
-<div>
 
-<button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#modalTambah">
-<i class="bi bi-plus-circle"></i> Tambah Data
-</button>
+    <div class="card">
+        <div class="card-body">
 
-<button class="btn btn-cart position-relative" data-bs-toggle="modal" data-bs-target="#modalKeranjang">
+            <div class="table-responsive">
 
-<i class="bi bi-cart3"></i>
+                <table id="tabelPenjualan" class="table table-bordered table-striped text-center align-middle">
 
-@if($keranjang->count() > 0)
-<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
-{{ $keranjang->count() }}
-</span>
-@endif
+                    <thead>
 
-</button>
+                        <tr>
+                            <th width="60">No</th>
+                            <th>Kode Transaksi</th>
+                            <th>Tanggal Jual</th>
+                            <th>Nama Obat</th>
+                            <th>Total Item</th>
+                            <th>Total Transaksi</th>
+                            <th width="100">Aksi</th>
+                        </tr>
 
-</div>
+                    </thead>
 
-</div>
+                    <tbody>
 
+                        @php $no=1; @endphp
 
-<div class="card">
-<div class="card-body">
+                        @foreach ($penjualan as $p)
+                            <tr>
 
-<div class="table-responsive">
+                                <td>{{ $no++ }}</td>
 
-<table id="tabelPenjualan" class="table table-bordered table-striped text-center align-middle">
+                                <td>{{ $p->no_transaksi }}</td>
 
-<thead>
+                                <td>{{ $p->tanggal }}</td>
 
-<tr>
-<th width="60">No</th>
-<th>Kode Transaksi</th>
-<th>Tanggal Jual</th>
-<th>Nama Obat</th>
-<th>Total Item</th>
-<th>Total Transaksi</th>
-<th width="100">Aksi</th>
-</tr>
+                                <td class="text-start">
 
-</thead>
+                                    @foreach ($p->detail as $d)
+                                        • {{ $d->obat->nama_obat ?? '-' }} <br>
+                                    @endforeach
 
-<tbody>
+                                </td>
 
-@php $no=1; @endphp
+                                <td>
+                                    {{ $p->detail->sum('jumlah') }} Item
+                                </td>
 
-@foreach($penjualan as $p)
+                                <td class="text-end">
+                                    Rp {{ number_format($p->total, 0, ',', '.') }}
+                                </td>
 
-<tr>
+                                <td>
 
-<td>{{ $no++ }}</td>
+                                    <a href="{{ route('penjualan.cetak', $p->id) }}" class="btn btn-sm btn-outline-success"
+                                        target="_blank">
 
-<td>{{ $p->no_transaksi }}</td>
+                                        <i class="bi bi-printer"></i>
 
-<td>{{ $p->tanggal }}</td>
+                                    </a>
 
-<td class="text-start">
+                                </td>
 
-@foreach($p->detail as $d)
+                            </tr>
+                        @endforeach
 
-• {{ $d->obat->nama_obat ?? '-' }} <br>
+                    </tbody>
 
-@endforeach
+                </table>
 
-</td>
+            </div>
 
-<td>
-{{ $p->detail->sum('jumlah') }} Item
-</td>
+        </div>
+    </div>
 
-<td class="text-end">
-Rp {{ number_format($p->total,0,',','.') }}
-</td>
 
-<td>
-
-<a href="{{ route('penjualan.cetak',$p->id) }}"
-class="btn btn-sm btn-outline-success"
-target="_blank">
-
-<i class="bi bi-printer"></i>
-
-</a>
-
-</td>
-
-</tr>
-
-@endforeach
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-</div>
-
-
-@include('kasir.data_penjualan.modal_tambah_penjualan')
-@include('kasir.data_penjualan.modal_keranjang')
-
+    @include('kasir.data_penjualan.modal_tambah_penjualan')
+    @include('kasir.data_penjualan.modal_keranjang')
 @endsection
 
 
 
 @push('scripts')
+    <script>
+        $(document).ready(function() {
 
-<script>
+            $('#tabelPenjualan').DataTable({
 
-$(document).ready(function(){
+                pageLength: 5,
 
-$('#tabelPenjualan').DataTable({
+                lengthMenu: [
+                    [5, 10, 25, 50],
+                    [5, 10, 25, 50]
+                ],
 
-pageLength:5,
+                language: {
+                    search: "Search:",
+                    lengthMenu: "Tampilkan _MENU_ data",
+                    zeroRecords: "Data tidak ditemukan",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    infoEmpty: "Tidak ada data",
+                    infoFiltered: "(difilter dari _MAX_ total data)",
+                    paginate: {
+                        previous: "Sebelumnya",
+                        next: "Berikutnya"
+                    }
+                }
 
-lengthMenu:[
-[5,10,25,50],
-[5,10,25,50]
-],
+            });
 
-language:{
-search:"Search:",
-lengthMenu:"Tampilkan _MENU_ data",
-zeroRecords:"Data tidak ditemukan",
-info:"Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-infoEmpty:"Tidak ada data",
-infoFiltered:"(difilter dari _MAX_ total data)",
-paginate:{
-previous:"Sebelumnya",
-next:"Berikutnya"
-}
-}
-
-});
-
-});
+        });
 
 
-$('#obat').on('change', function(){
+        $('#obat').on('change', function() {
 
-let selected = $(this).find(':selected');
+            let selected = $(this).find(':selected');
 
-let harga = selected.data('harga');
-let exp = selected.data('exp');
+            let harga = selected.data('harga');
+            let exp = selected.data('exp');
 
-$('#harga').val(formatRupiah(harga));
-$('#tanggal_exp').val(exp);
+            $('#harga').val(formatRupiah(harga));
+            $('#tanggal_exp').val(exp);
 
-});
-
-
-$('#jumlah').on('keyup change', function(){
-
-let harga = $('#harga').val().replace(/\D/g,'');
-let jumlah = $(this).val();
-
-if(harga && jumlah){
-
-let total = harga * jumlah;
-
-$('#total').val(formatRupiah(total));
-
-}
-
-});
+        });
 
 
-function formatRupiah(angka){
+        $('#jumlah').on('keyup change', function() {
 
-return new Intl.NumberFormat('id-ID',{
-style:'currency',
-currency:'IDR',
-minimumFractionDigits:0
-}).format(angka);
+            let harga = $('#harga').val().replace(/\D/g, '');
+            let jumlah = $(this).val();
 
-}
+            if (harga && jumlah) {
 
-</script>
+                let total = harga * jumlah;
 
+                $('#total').val(formatRupiah(total));
+
+            }
+
+        });
+
+
+        function formatRupiah(angka) {
+
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(angka);
+
+        }
+    </script>
 @endpush

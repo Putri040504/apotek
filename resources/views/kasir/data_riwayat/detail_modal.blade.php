@@ -1,45 +1,43 @@
 <table class="table table-bordered table-sm">
 
-<thead class="table-success">
+    <thead class="table-success">
 
-<tr>
-<th>Obat</th>
-<th>Expired</th>
-<th>Harga</th>
-<th>Jumlah</th>
-<th>Subtotal</th>
-</tr>
+        <tr>
+            <th>Obat</th>
+            <th>Expired</th>
+            <th>Harga</th>
+            <th>Jumlah</th>
+            <th>Subtotal</th>
+        </tr>
 
-</thead>
+    </thead>
 
-<tbody>
+    <tbody>
 
-@foreach($penjualan->detail as $d)
+        @foreach ($penjualan->detail as $d)
+            <tr>
 
-<tr>
+                <td>{{ $d->obat->nama_obat }}</td>
 
-<td>{{ $d->obat->nama_obat }}</td>
+                <td>{{ date('d-m-Y', strtotime($d->obat->tanggal_exp)) }}</td>
 
-<td>{{ date('d-m-Y', strtotime($d->obat->tanggal_exp)) }}</td>
+                <td>Rp {{ number_format($d->harga, 0, ',', '.') }}</td>
 
-<td>Rp {{ number_format($d->harga,0,',','.') }}</td>
+                <td>{{ $d->jumlah }}</td>
 
-<td>{{ $d->jumlah }}</td>
+                <td>Rp {{ number_format($d->subtotal, 0, ',', '.') }}</td>
 
-<td>Rp {{ number_format($d->subtotal,0,',','.') }}</td>
+            </tr>
+        @endforeach
 
-</tr>
-
-@endforeach
-
-</tbody>
+    </tbody>
 
 </table>
 
 <div class="text-end mt-3">
 
-<b style="color:#198754;">
-Total : Rp {{ number_format($penjualan->total,0,',','.') }}
-</b>
+    <b style="color:#198754;">
+        Total : Rp {{ number_format($penjualan->total, 0, ',', '.') }}
+    </b>
 
 </div>

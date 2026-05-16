@@ -3,74 +3,72 @@
 
 <head>
 
-<title>Laporan Penjualan</title>
+    <title>Laporan Penjualan</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 </head>
 
 <body onload="window.print()">
 
-<div class="container mt-4">
+    <div class="container mt-4">
 
-<h4 class="text-center">LAPORAN DETAIL PENJUALAN</h4>
-<h6 class="text-center">Apotek Zema</h6>
+        <h4 class="text-center">LAPORAN DETAIL PENJUALAN</h4>
+        <h6 class="text-center">Apotek Zema</h6>
 
-<hr>
+        <hr>
 
-<p>
-<b>Kode Transaksi :</b> {{ $penjualan->no_transaksi }} <br>
-<b>Tanggal :</b> {{ $penjualan->tanggal }}
-</p>
+        <p>
+            <b>Kode Transaksi :</b> {{ $penjualan->no_transaksi }} <br>
+            <b>Tanggal :</b> {{ $penjualan->tanggal }}
+        </p>
 
-<table class="table table-bordered">
+        <table class="table table-bordered">
 
-<thead>
+            <thead>
 
-<tr>
-<th>No</th>
-<th>Nama Obat</th>
-<th>Tanggal Exp</th>
-<th>Harga</th>
-<th>Jumlah</th>
-<th>Subtotal</th>
-</tr>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Obat</th>
+                    <th>Tanggal Exp</th>
+                    <th>Harga</th>
+                    <th>Jumlah</th>
+                    <th>Subtotal</th>
+                </tr>
 
-</thead>
+            </thead>
 
-<tbody>
+            <tbody>
 
-@foreach($penjualan->detail as $d)
+                @foreach ($penjualan->detail as $d)
+                    <tr>
 
-<tr>
+                        <td>{{ $loop->iteration }}</td>
 
-<td>{{ $loop->iteration }}</td>
+                        <td>{{ $d->obat->nama_obat }}</td>
 
-<td>{{ $d->obat->nama_obat }}</td>
+                        <td>{{ $d->obat->tanggal_exp }}</td>
 
-<td>{{ $d->obat->tanggal_exp }}</td>
+                        <td>Rp {{ number_format($d->harga) }}</td>
 
-<td>Rp {{ number_format($d->harga) }}</td>
+                        <td>{{ $d->jumlah }}</td>
 
-<td>{{ $d->jumlah }}</td>
+                        <td>Rp {{ number_format($d->subtotal) }}</td>
 
-<td>Rp {{ number_format($d->subtotal) }}</td>
+                    </tr>
+                @endforeach
 
-</tr>
+            </tbody>
 
-@endforeach
+        </table>
 
-</tbody>
+        <h5 class="text-end">
 
-</table>
+            Total : Rp {{ number_format($penjualan->total) }}
 
-<h5 class="text-end">
+        </h5>
 
-Total : Rp {{ number_format($penjualan->total) }}
-
-</h5>
-
-</div>
+    </div>
 
 </body>
 

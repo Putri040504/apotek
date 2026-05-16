@@ -3,118 +3,113 @@
 
 <head>
 
-<title>Laporan Detail Penjualan</title>
+    <title>Laporan Detail Penjualan</title>
 
-<style>
+    <style>
+        body {
+            font-family: Arial;
+            font-size: 12px;
+        }
 
-body{
-font-family: Arial;
-font-size:12px;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
 
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:20px;
-}
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
 
-table, th, td{
-border:1px solid black;
-}
+        th,
+        td {
+            padding: 6px;
+            text-align: center;
+        }
 
-th, td{
-padding:6px;
-text-align:center;
-}
-
-.judul{
-text-align:center;
-}
-
-</style>
+        .judul {
+            text-align: center;
+        }
+    </style>
 
 </head>
 
 <body>
 
-<div class="judul">
+    <div class="judul">
 
-<h3>APOTEK ZEMA</h3>
-<h4>LAPORAN DETAIL PENJUALAN</h4>
+        <h3>APOTEK ZEMA</h3>
+        <h4>LAPORAN DETAIL PENJUALAN</h4>
 
-</div>
+    </div>
 
-<table>
+    <table>
 
-<thead>
+        <thead>
 
-<tr>
-<th>No</th>
-<th>Kode Transaksi</th>
-<th>Tanggal</th>
-<th>Obat</th>
-<th>Expired</th>
-<th>Harga</th>
-<th>Jumlah</th>
-<th>Subtotal</th>
-</tr>
+            <tr>
+                <th>No</th>
+                <th>Kode Transaksi</th>
+                <th>Tanggal</th>
+                <th>Obat</th>
+                <th>Expired</th>
+                <th>Harga</th>
+                <th>Jumlah</th>
+                <th>Subtotal</th>
+            </tr>
 
-</thead>
+        </thead>
 
-<tbody>
+        <tbody>
 
-@php
-$no=1;
-$total=0;
-@endphp
+            @php
+                $no = 1;
+                $total = 0;
+            @endphp
 
-@foreach($riwayat as $p)
+            @foreach ($riwayat as $p)
+                @foreach ($p->detail as $d)
+                    <tr>
 
-@foreach($p->detail as $d)
+                        <td>{{ $no++ }}</td>
 
-<tr>
+                        <td>{{ $p->no_transaksi }}</td>
 
-<td>{{ $no++ }}</td>
+                        <td>{{ \Carbon\Carbon::parse($p->tanggal)->translatedFormat('d F Y') }}</td>
 
-<td>{{ $p->no_transaksi }}</td>
+                        <td>{{ $d->obat?->nama_obat ?? '-' }}</td>
 
-<td>{{ \Carbon\Carbon::parse($p->tanggal)->translatedFormat('d F Y') }}</td>
+                        <td>
+                            {{ $d->obat?->tanggal_exp ? date('d-m-Y', strtotime($d->obat->tanggal_exp)) : '-' }}
+                        </td>
 
-<td>{{ $d->obat?->nama_obat ?? '-' }}</td>
+                        <td>Rp {{ number_format($d->harga, 0, ',', '.') }}</td>
 
-<td>
-{{ $d->obat?->tanggal_exp 
-    ? date('d-m-Y', strtotime($d->obat->tanggal_exp)) 
-    : '-' }}
-</td>
+                        <td>{{ $d->jumlah }}</td>
 
-<td>Rp {{ number_format($d->harga,0,',','.') }}</td>
+                        <td>Rp {{ number_format($d->subtotal, 0, ',', '.') }}</td>
 
-<td>{{ $d->jumlah }}</td>
+                    </tr>
 
-<td>Rp {{ number_format($d->subtotal,0,',','.') }}</td>
+                    @php
+                        $total += $d->subtotal;
+                    @endphp
+                @endforeach
+            @endforeach
 
-</tr>
+        </tbody>
 
-@php
-$total += $d->subtotal;
-@endphp
+    </table>
 
-@endforeach
+    <br>
 
-@endforeach
+    <div style="text-align:right">
 
-</tbody>
+        <b>Total Penjualan : Rp {{ number_format($total, 0, ',', '.') }}</b>
 
-</table>
-
-<br>
-
-<div style="text-align:right">
-
-<b>Total Penjualan : Rp {{ number_format($total,0,',','.') }}</b>
-
-</div>
+    </div>
 
 </body>
 

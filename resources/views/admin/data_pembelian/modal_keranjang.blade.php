@@ -1,236 +1,225 @@
 <style>
+    #tabelKeranjang {
+        font-size: 13px;
+    }
 
-#tabelKeranjang{
-font-size:13px;
-}
+    #tabelKeranjang th {
+        font-size: 12px;
+        padding: 6px;
+    }
 
-#tabelKeranjang th{
-font-size:12px;
-padding:6px;
-}
-
-#tabelKeranjang td{
-padding:5px;
-}
-
+    #tabelKeranjang td {
+        padding: 5px;
+    }
 </style>
 
 
 <div class="modal fade" id="modalKeranjang">
-<div class="modal-dialog modal-lg modal-dialog-centered">
-<div class="modal-content">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
 
-<!-- HEADER -->
-<div class="modal-header bg-success text-white">
+            <!-- HEADER -->
+            <div class="modal-header bg-success text-white">
 
-<h5 class="modal-title" style="font-size:16px;">
-<i class="bi bi-cart3"></i> Keranjang Pembelian
-</h5>
+                <h5 class="modal-title" style="font-size:16px;">
+                    <i class="bi bi-cart3"></i> Keranjang Pembelian
+                </h5>
 
-<button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
 
-</div>
+            </div>
 
 
-<form id="formCheckout" action="{{ route('pembelian.checkout') }}" method="POST">
-@csrf
+            <form id="formCheckout" action="{{ route('pembelian.checkout') }}" method="POST">
+                @csrf
 
-<div class="modal-body" style="font-size:13px;">
+                <div class="modal-body" style="font-size:13px;">
 
-<div class="table-responsive">
+                    <div class="table-responsive">
 
-<table id="tabelKeranjang" class="table table-bordered text-center align-middle">
+                        <table id="tabelKeranjang" class="table table-bordered text-center align-middle">
 
-<thead class="header-hijau text-center align-top">
-<tr>
-<th width="50">No</th>
-<th>Kode Keranjang</th>
-<th>Kode Supplier</th>
-<th>Kode Obat</th>
-<th>Tanggal</th>
-<th>Jumlah</th>
-<th>Total</th>
-<th width="120">Aksi</th>
-</tr>
-</thead>
+                            <thead class="header-hijau text-center align-top">
+                                <tr>
+                                    <th width="50">No</th>
+                                    <th>Kode Keranjang</th>
+                                    <th>Kode Supplier</th>
+                                    <th>Kode Obat</th>
+                                    <th>Tanggal</th>
+                                    <th>Jumlah</th>
+                                    <th>Total</th>
+                                    <th width="120">Aksi</th>
+                                </tr>
+                            </thead>
 
-<tbody>
+                            <tbody>
 
-@php 
-$no = 1;
-$total = 0; 
-@endphp
+                                @php
+                                    $no = 1;
+                                    $total = 0;
+                                @endphp
 
-@forelse($keranjang as $k)
+                                @forelse($keranjang as $k)
+                                    @php
+                                        $harga = $k->obat->harga_beli ?? 0;
+                                        $subtotal = $k->qty * $harga;
+                                        $total += $subtotal;
+                                    @endphp
 
-@php
-$harga = $k->obat->harga_beli ?? 0;
-$subtotal = $k->qty * $harga;
-$total += $subtotal;
-@endphp
+                                    <tr>
 
-<tr>
+                                        <td>{{ $no++ }}</td>
 
-<td>{{ $no++ }}</td>
+                                        <td>BL00{{ $k->id }}</td>
 
-<td>BL00{{ $k->id }}</td>
+                                        <td>{{ $k->supplier->kode_supplier ?? '-' }}</td>
 
-<td>{{ $k->supplier->kode_supplier ?? '-' }}</td>
+                                        <td>{{ $k->obat->kode_obat ?? '-' }}</td>
 
-<td>{{ $k->obat->kode_obat ?? '-' }}</td>
+                                        <td>{{ date('Y-m-d') }}</td>
 
-<td>{{ date('Y-m-d') }}</td>
+                                        <td>{{ $k->qty }}</td>
 
-<td>{{ $k->qty }}</td>
+                                        <td class="text-end">
+                                            Rp {{ number_format($subtotal) }}
+                                        </td>
 
-<td class="text-end">
-Rp {{ number_format($subtotal) }}
-</td>
+                                        <td>
 
-<td>
+                                            <div class="d-flex justify-content-center align-items-center gap-2">
 
-<div class="d-flex justify-content-center align-items-center gap-2">
+                                                <input type="checkbox" name="keranjang_id[]" value="{{ $k->id }}"
+                                                    class="form-check-input checkbox-hijau checkItem"
+                                                    data-subtotal="{{ $subtotal }}">
 
-<input 
-type="checkbox"
-name="keranjang_id[]"
-value="{{ $k->id }}"
-class="form-check-input checkbox-hijau checkItem"
-data-subtotal="{{ $subtotal }}"
->
+                                                <button type="button" onclick="hapusKeranjang({{ $k->id }})"
+                                                    class="btn btn-sm btn-outline-danger">
 
-<button type="button"
-onclick="hapusKeranjang({{ $k->id }})"
-class="btn btn-sm btn-outline-danger">
+                                                    <i class="bi bi-trash"></i>
 
-<i class="bi bi-trash"></i>
+                                                </button>
 
-</button>
+                                            </div>
 
-</div>
+                                        </td>
 
-</td>
+                                    </tr>
 
-</tr>
+                                @empty
 
-@empty
+                                    <tr>
+                                        <td colspan="8" class="text-muted text-center">
+                                            Keranjang masih kosong
+                                        </td>
+                                    </tr>
+                                @endforelse
 
-<tr>
-<td colspan="8" class="text-muted text-center">
-Keranjang masih kosong
-</td>
-</tr>
+                            </tbody>
 
-@endforelse
+                        </table>
 
-</tbody>
+                    </div>
 
-</table>
+                    <!-- TOTAL -->
+                    <div class="d-flex justify-content-end mt-3">
 
-</div>
+                        <h5 class="text-success" style="font-size:16px;">
+                            Total : <span id="totalSemua">Rp 0</span>
+                        </h5>
 
-<!-- TOTAL -->
-<div class="d-flex justify-content-end mt-3">
+                    </div>
 
-<h5 class="text-success" style="font-size:16px;">
-Total : <span id="totalSemua">Rp 0</span>
-</h5>
+                </div>
 
-</div>
+                <!-- FOOTER -->
+                <div class="modal-footer">
 
-</div>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Tutup
+                    </button>
 
-<!-- FOOTER -->
-<div class="modal-footer">
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="bi bi-check-circle"></i> Checkout Terpilih
+                    </button>
 
-<button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
-<i class="bi bi-x-circle"></i> Tutup
-</button>
+                </div>
 
-<button type="submit" class="btn btn-success btn-sm">
-<i class="bi bi-check-circle"></i> Checkout Terpilih
-</button>
+            </form>
 
-</div>
-
-</form>
-
-</div>
-</div>
+        </div>
+    </div>
 </div>
 
 
 <!-- FORM HAPUS TERSEMBUNYI -->
 <form id="formHapusKeranjang" method="POST">
-@csrf
-@method('DELETE')
+    @csrf
+    @method('DELETE')
 </form>
 
 
 <script>
+    function hapusKeranjang(id) {
 
-function hapusKeranjang(id){
+        Swal.fire({
+            title: 'Yakin hapus?',
+            text: 'Item akan dihapus dari keranjang',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, hapus',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
 
-Swal.fire({
-title: 'Yakin hapus?',
-text: 'Item akan dihapus dari keranjang',
-icon: 'warning',
-showCancelButton: true,
-confirmButtonColor: '#d33',
-cancelButtonColor: '#6c757d',
-confirmButtonText: 'Ya, hapus',
-cancelButtonText: 'Batal'
-}).then((result)=>{
+            if (result.isConfirmed) {
 
-if(result.isConfirmed){
+                let form = document.getElementById('formHapusKeranjang');
 
-let form = document.getElementById('formHapusKeranjang');
+                form.action = '/admin/keranjang/' + id;
 
-form.action = '/admin/keranjang/' + id;
+                form.submit();
 
-form.submit();
+            }
 
-}
+        });
 
-});
-
-}
-
-
-function formatRupiah(angka){
-return new Intl.NumberFormat('id-ID',{
-style:'currency',
-currency:'IDR',
-minimumFractionDigits:0
-}).format(angka);
-}
+    }
 
 
-function hitungTotalKeranjang(){
-
-let total = 0;
-
-document.querySelectorAll('.checkItem:checked').forEach(function(item){
-
-let subtotal = parseInt(item.getAttribute('data-subtotal')) || 0;
-
-total += subtotal;
-
-});
-
-document.getElementById('totalSemua').innerText = formatRupiah(total);
-
-}
+    function formatRupiah(angka) {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0
+        }).format(angka);
+    }
 
 
-document.querySelectorAll('.checkItem').forEach(function(item){
+    function hitungTotalKeranjang() {
 
-item.addEventListener('change', function(){
+        let total = 0;
 
-hitungTotalKeranjang();
+        document.querySelectorAll('.checkItem:checked').forEach(function(item) {
 
-});
+            let subtotal = parseInt(item.getAttribute('data-subtotal')) || 0;
 
-});
+            total += subtotal;
 
+        });
+
+        document.getElementById('totalSemua').innerText = formatRupiah(total);
+
+    }
+
+
+    document.querySelectorAll('.checkItem').forEach(function(item) {
+
+        item.addEventListener('change', function() {
+
+            hitungTotalKeranjang();
+
+        });
+
+    });
 </script>

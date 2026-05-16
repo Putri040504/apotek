@@ -1,169 +1,162 @@
 @extends('kasir.layout.app')
 
 @section('title')
-Profil Kasir
+    Profil Kasir
 @endsection
 
 @section('content')
+    <style>
+        .profile-wrapper {
+            max-width: 1100px;
+            margin: auto;
+        }
 
-<style>
+        .profile-card {
+            border-radius: 12px;
+        }
 
-.profile-wrapper{
-max-width:1100px;
-margin:auto;
-}
+        .profile-avatar {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #f1f1f1;
+        }
 
-.profile-card{
-border-radius:12px;
-}
+        /* INPUT FOCUS JADI HIJAU (HILANGKAN BIRU BOOTSTRAP) */
 
-.profile-avatar{
-width:130px;
-height:130px;
-border-radius:50%;
-object-fit:cover;
-border:4px solid #f1f1f1;
-}
+        .form-control:focus {
+            border-color: #198754 !important;
+            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
+        }
 
-/* INPUT FOCUS JADI HIJAU (HILANGKAN BIRU BOOTSTRAP) */
+        /* FILE INPUT JUGA */
 
-.form-control:focus{
-border-color:#198754 !important;
-box-shadow:0 0 0 0.2rem rgba(25,135,84,0.25) !important;
-}
+        input[type="file"]:focus {
+            border-color: #198754 !important;
+            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
+        }
 
-/* FILE INPUT JUGA */
+        /* LABEL LEBIH RAPI */
 
-input[type="file"]:focus{
-border-color:#198754 !important;
-box-shadow:0 0 0 0.2rem rgba(25,135,84,0.25) !important;
-}
+        .form-label {
+            font-weight: 500;
+            font-size: 14px;
+        }
 
-/* LABEL LEBIH RAPI */
+        /* CARD PROFIL LEBIH HALUS */
 
-.form-label{
-font-weight:500;
-font-size:14px;
-}
+        .profile-card {
+            border-radius: 12px;
+            transition: 0.3s;
+        }
 
-/* CARD PROFIL LEBIH HALUS */
+        .profile-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        }
+    </style>
 
-.profile-card{
-border-radius:12px;
-transition:0.3s;
-}
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
 
-.profile-card:hover{
-transform:translateY(-2px);
-box-shadow:0 6px 18px rgba(0,0,0,0.08);
-}
+    <div class="profile-wrapper">
 
-</style>
+        <div class="row g-4">
 
-@if(session('success'))
+            <!-- PROFILE INFO -->
 
-<div class="alert alert-success">
-{{ session('success') }}
-</div>
-@endif
+            <div class="col-md-4">
 
-<div class="profile-wrapper">
+                <div class="card profile-card shadow-sm border-0 text-center">
 
-<div class="row g-4">
+                    <div class="card-body p-4">
 
-<!-- PROFILE INFO -->
+                        <img src="{{ $user->foto ? asset('storage/foto/' . $user->foto) : asset('logo/user.png') }}"
+                            class="profile-avatar mb-3">
 
-<div class="col-md-4">
+                        <h5 class="mb-1 fw-semibold">{{ $user->name }}</h5>
 
-<div class="card profile-card shadow-sm border-0 text-center">
+                        <span class="badge bg-success text-capitalize mb-3">
+                            {{ $user->role }}
+                        </span>
 
-<div class="card-body p-4">
+                        <hr>
 
-<img
-src="{{ $user->foto ? asset('storage/foto/'.$user->foto) : asset('logo/user.png') }}"
-class="profile-avatar mb-3"
+                        <p class="text-muted small mb-0">
+                            Kelola informasi profil akun anda.
+                            Pastikan data selalu diperbarui.
+                        </p>
 
->
+                    </div>
 
-<h5 class="mb-1 fw-semibold">{{ $user->name }}</h5>
+                </div>
 
-<span class="badge bg-success text-capitalize mb-3">
-{{ $user->role }}
-</span>
+            </div>
 
-<hr>
+            <!-- FORM EDIT -->
 
-<p class="text-muted small mb-0">
-Kelola informasi profil akun anda.  
-Pastikan data selalu diperbarui.
-</p>
+            <div class="col-md-8">
 
-</div>
+                <div class="card profile-card shadow-sm border-0">
 
-</div>
+                    <div class="card-body p-4">
 
-</div>
+                        <h5 class="mb-4 fw-semibold">
+                            <i class="bi bi-person-gear me-2"></i>
+                            Edit Profil
+                        </h5>
 
-<!-- FORM EDIT -->
+                        <form action="{{ route('kasir.profile.update') }}" method="POST" enctype="multipart/form-data">
 
-<div class="col-md-8">
+                            @csrf
 
-<div class="card profile-card shadow-sm border-0">
+                            <div class="row">
 
-<div class="card-body p-4">
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label">Foto Profil</label>
+                                    <input type="file" name="foto" class="form-control">
+                                </div>
 
-<h5 class="mb-4 fw-semibold">
-<i class="bi bi-person-gear me-2"></i>
-Edit Profil
-</h5>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Nama</label>
+                                    <input type="text" name="name" class="form-control" value="{{ $user->name }}">
+                                </div>
 
-<form action="{{ route('kasir.profile.update') }}" method="POST" enctype="multipart/form-data">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Role</label>
+                                    <input type="text" class="form-control" value="{{ $user->role }}" readonly>
+                                </div>
 
-@csrf
+                                <div class="col-md-12 mb-4">
+                                    <label class="form-label">Password Baru</label>
+                                    <input type="password" name="password" class="form-control"
+                                        placeholder="Kosongkan jika tidak diganti">
+                                </div>
 
-<div class="row">
+                                <div class="col-md-12">
 
-<div class="col-md-12 mb-3">
-<label class="form-label">Foto Profil</label>
-<input type="file" name="foto" class="form-control">
-</div>
+                                    <button class="btn btn-success px-4">
+                                        <i class="bi bi-check-circle me-1"></i>
+                                        Update Profil
+                                    </button>
 
-<div class="col-md-6 mb-3">
-<label class="form-label">Nama</label>
-<input type="text" name="name" class="form-control" value="{{ $user->name }}">
-</div>
+                                </div>
 
-<div class="col-md-6 mb-3">
-<label class="form-label">Role</label>
-<input type="text" class="form-control" value="{{ $user->role }}" readonly>
-</div>
+                            </div>
 
-<div class="col-md-12 mb-4">
-<label class="form-label">Password Baru</label>
-<input type="password" name="password" class="form-control" placeholder="Kosongkan jika tidak diganti">
-</div>
+                        </form>
 
-<div class="col-md-12">
+                    </div>
 
-<button class="btn btn-success px-4">
-<i class="bi bi-check-circle me-1"></i>
-Update Profil
-</button>
+                </div>
 
-</div>
+            </div>
 
-</div>
+        </div>
 
-</form>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
+    </div>
 @endsection

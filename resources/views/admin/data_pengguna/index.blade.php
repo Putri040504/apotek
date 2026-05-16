@@ -1,201 +1,190 @@
 @extends('admin.layout.app')
 
 @section('title')
-Data Pengguna
+    Data Pengguna
 @endsection
 
 @section('content')
+    <style>
+        #tabelPengguna {
+            font-size: 13px;
+        }
 
-<style>
-#tabelPengguna{
-font-size:13px;
-}
+        #tabelPengguna th {
+            font-size: 12px;
+            padding: 6px;
+        }
 
-#tabelPengguna th{
-font-size:12px;
-padding:6px;
-}
+        #tabelPengguna td {
+            padding: 5px;
+        }
+    </style>
 
-#tabelPengguna td{
-padding:5px;
-}
-</style>
+    <div class="d-flex justify-content-between align-items-center mb-3">
 
-<div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#modalTambah">
+                <i class="bi bi-plus-circle"></i> Tambah Data
+            </button>
+        </div>
 
-<div>
-<button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#modalTambah">
-<i class="bi bi-plus-circle"></i> Tambah Data
-</button>
-</div>
+        <div>
 
-<div>
+            <a href="{{ route('pengguna.excel') }}" class="btn btn-outline-success me-2">
+                <i class="bi bi-file-earmark-excel-fill"></i> Excel
+            </a>
 
-<a href="{{ route('pengguna.excel') }}" class="btn btn-outline-success me-2">
-<i class="bi bi-file-earmark-excel-fill"></i> Excel
-</a>
+            <a href="{{ route('pengguna.pdf') }}" class="btn btn-outline-danger">
+                <i class="bi bi-file-earmark-pdf-fill"></i> PDF
+            </a>
 
-<a href="{{ route('pengguna.pdf') }}" class="btn btn-outline-danger">
-<i class="bi bi-file-earmark-pdf-fill"></i> PDF
-</a>
+        </div>
 
-</div>
+    </div>
 
-</div>
 
+    <div class="card">
+        <div class="card-body">
 
-<div class="card">
-<div class="card-body">
+            <table id="tabelPengguna" class="table table-bordered align-middle w-100">
 
-<table id="tabelPengguna" class="table table-bordered align-middle w-100">
+                <thead class="header-hijau">
 
-<thead class="header-hijau">
+                    <tr>
 
-<tr>
+                        <th width="60">No</th>
+                        <th>Nama</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th width="120">Aksi</th>
 
-<th width="60">No</th>
-<th>Nama</th>
-<th>Email</th>
-<th>Role</th>
-<th width="120">Aksi</th>
+                    </tr>
 
-</tr>
+                </thead>
 
-</thead>
+                <tbody>
 
-<tbody>
+                    @foreach ($users as $user)
+                        <tr>
 
-@foreach($users as $user)
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td>{{ $user->role }}</td>
 
-<tr>
+                            <td>
 
-<td>{{ $loop->iteration }}</td>
-<td>{{ $user->name }}</td>
-<td>{{ $user->email }}</td>
-<td>{{ $user->role }}</td>
+                                <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal"
+                                    data-bs-target="#modalEdit{{ $user->id }}">
 
-<td>
+                                    <i class="bi bi-pencil-square"></i>
 
-<button
-class="btn btn-sm btn-outline-success"
-data-bs-toggle="modal"
-data-bs-target="#modalEdit{{ $user->id }}">
+                                </button>
 
-<i class="bi bi-pencil-square"></i>
+                                <form id="delete-form-{{ $user->id }}"
+                                    action="{{ route('pengguna.destroy', $user->id) }}" method="POST"
+                                    style="display:inline">
 
-</button>
+                                    @csrf
+                                    @method('DELETE')
 
-<form id="delete-form-{{ $user->id }}" action="{{ route('pengguna.destroy',$user->id) }}" method="POST" style="display:inline">
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                        onclick="confirmDelete({{ $user->id }})">
 
-@csrf
-@method('DELETE')
+                                        <i class="bi bi-trash"></i>
 
-<button type="button"
-class="btn btn-sm btn-outline-danger"
-onclick="confirmDelete({{ $user->id }})">
+                                    </button>
 
-<i class="bi bi-trash"></i>
+                                </form>
 
-</button>
+                            </td>
 
-</form>
+                        </tr>
 
-</td>
+                        @include('admin.data_pengguna.modal_edit')
+                    @endforeach
 
-</tr>
+                </tbody>
 
-@include('admin.data_pengguna.modal_edit')
+            </table>
 
-@endforeach
+        </div>
+    </div>
 
-</tbody>
+    @include('admin.data_pengguna.modal_tambah')
 
-</table>
+    @push('scripts')
+        <script>
+            $(document).ready(function() {
 
-</div>
-</div>
+                $('#tabelPengguna').DataTable({
 
-@include('admin.data_pengguna.modal_tambah')
+                    pageLength: 5,
 
-@push('scripts')
+                    lengthMenu: [
+                        [5, 10, 25, 50],
+                        [5, 10, 25, 50]
+                    ],
 
-<script>
+                    language: {
+                        search: "Search:",
+                        lengthMenu: "Tampilkan _MENU_ data",
+                        zeroRecords: "Data tidak ditemukan",
+                        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                        infoEmpty: "Tidak ada data",
+                        infoFiltered: "(difilter dari _MAX_ total data)",
+                        paginate: {
+                            previous: "Sebelumnya",
+                            next: "Berikutnya"
+                        }
+                    }
 
-$(document).ready(function(){
+                });
 
-$('#tabelPengguna').DataTable({
+            });
 
-pageLength:5,
+            @if (session('success'))
 
-lengthMenu:[
-[5,10,25,50],
-[5,10,25,50]
-],
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: '{{ session('success') }}',
+                    timer: 2000,
+                    showConfirmButton: false
+                })
+            @endif
 
-language:{
-search:"Search:",
-lengthMenu:"Tampilkan _MENU_ data",
-zeroRecords:"Data tidak ditemukan",
-info:"Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-infoEmpty:"Tidak ada data",
-infoFiltered:"(difilter dari _MAX_ total data)",
-paginate:{
-previous:"Sebelumnya",
-next:"Berikutnya"
-}
-}
 
-});
+            @if ($errors->any())
 
-});
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: '{{ $errors->first() }}'
+                })
+            @endif
 
-@if(session('success'))
 
-Swal.fire({
-icon:'success',
-title:'Berhasil',
-text:'{{ session('success') }}',
-timer:2000,
-showConfirmButton:false
-})
+            function confirmDelete(id) {
 
-@endif
+                Swal.fire({
+                    title: 'Yakin hapus data?',
+                    text: "Data tidak bisa dikembalikan!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
 
+                    if (result.isConfirmed) {
+                        document.getElementById('delete-form-' + id).submit();
+                    }
 
-@if ($errors->any())
+                })
 
-Swal.fire({
-icon:'error',
-title:'Gagal',
-text:'{{ $errors->first() }}'
-})
-
-@endif
-
-
-function confirmDelete(id){
-
-Swal.fire({
-title: 'Yakin hapus data?',
-text: "Data tidak bisa dikembalikan!",
-icon: 'warning',
-showCancelButton: true,
-confirmButtonColor: '#d33',
-cancelButtonColor: '#6c757d',
-confirmButtonText: 'Ya, hapus!',
-cancelButtonText: 'Batal'
-}).then((result) => {
-
-if (result.isConfirmed) {
-document.getElementById('delete-form-'+id).submit();
-}
-
-})
-
-}
-
-</script>
-
-@endpush
-
+            }
+        </script>
+    @endpush
 @endsection

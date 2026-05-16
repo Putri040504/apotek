@@ -1,128 +1,123 @@
 @extends('admin.layout.app')
 
 @section('title')
-Profil Admin
+    Profil Admin
 @endsection
 
 @section('content')
+    <style>
+        .profile-wrapper {
+            max-width: 1100px;
+            margin: auto;
+        }
 
-<style>
+        .profile-card {
+            border-radius: 12px;
+        }
 
-.profile-wrapper{
-max-width:1100px;
-margin:auto;
-}
+        .profile-avatar {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #f1f1f1;
+        }
+    </style>
 
-.profile-card{
-border-radius:12px;
-}
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
 
-.profile-avatar{
-width:130px;
-height:130px;
-border-radius:50%;
-object-fit:cover;
-border:4px solid #f1f1f1;
-}
+    <div class="profile-wrapper">
 
-</style>
+        <div class="row g-4">
 
-@if(session('success'))
-<div class="alert alert-success">
-{{ session('success') }}
-</div>
-@endif
+            <!-- PROFILE INFO -->
+            <div class="col-md-4">
 
-<div class="profile-wrapper">
+                <div class="card profile-card shadow-sm border-0 text-center">
 
-<div class="row g-4">
+                    <div class="card-body p-4">
 
-<!-- PROFILE INFO -->
-<div class="col-md-4">
+                        <img src="{{ $user->foto ? asset('storage/foto/' . $user->foto) : asset('logo/user.png') }}"
+                            class="profile-avatar mb-3">
 
-<div class="card profile-card shadow-sm border-0 text-center">
+                        <h5 class="mb-1 fw-semibold">{{ $user->name }}</h5>
 
-<div class="card-body p-4">
+                        <span class="badge bg-success text-capitalize mb-3">
+                            {{ $user->role }}
+                        </span>
 
-<img
-src="{{ $user->foto ? asset('storage/foto/'.$user->foto) : asset('logo/user.png') }}"
-class="profile-avatar mb-3"
->
+                        <hr>
 
-<h5 class="mb-1 fw-semibold">{{ $user->name }}</h5>
+                        <p class="text-muted small mb-0">
+                            Kelola informasi profil akun anda.
+                            Pastikan data selalu diperbarui.
+                        </p>
 
-<span class="badge bg-success text-capitalize mb-3">
-{{ $user->role }}
-</span>
-
-<hr>
-
-<p class="text-muted small mb-0">
-Kelola informasi profil akun anda.  
-Pastikan data selalu diperbarui.
-</p>
-
-</div>
-</div>
-</div>
+                    </div>
+                </div>
+            </div>
 
 
-<!-- FORM EDIT -->
-<div class="col-md-8">
+            <!-- FORM EDIT -->
+            <div class="col-md-8">
 
-<div class="card profile-card shadow-sm border-0">
+                <div class="card profile-card shadow-sm border-0">
 
-<div class="card-body p-4">
+                    <div class="card-body p-4">
 
-<h5 class="mb-4 fw-semibold">
-<i class="bi bi-person-gear me-2"></i>
-Edit Profil
-</h5>
+                        <h5 class="mb-4 fw-semibold">
+                            <i class="bi bi-person-gear me-2"></i>
+                            Edit Profil
+                        </h5>
 
-<form action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data">
 
-@csrf
+                            @csrf
 
-<div class="row">
+                            <div class="row">
 
-<div class="col-md-12 mb-3">
-<label class="form-label">Foto Profil</label>
-<input type="file" name="foto" class="form-control">
-</div>
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label">Foto Profil</label>
+                                    <input type="file" name="foto" class="form-control">
+                                </div>
 
-<div class="col-md-6 mb-3">
-<label class="form-label">Nama</label>
-<input type="text" name="name" class="form-control" value="{{ $user->name }}">
-</div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Nama</label>
+                                    <input type="text" name="name" class="form-control" value="{{ $user->name }}">
+                                </div>
 
-<div class="col-md-6 mb-3">
-<label class="form-label">Role</label>
-<input type="text" class="form-control" value="{{ $user->role }}" readonly>
-</div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Role</label>
+                                    <input type="text" class="form-control" value="{{ $user->role }}" readonly>
+                                </div>
 
-<div class="col-md-12 mb-4">
-<label class="form-label">Password Baru</label>
-<input type="password" name="password" class="form-control" placeholder="Kosongkan jika tidak diganti">
-</div>
+                                <div class="col-md-12 mb-4">
+                                    <label class="form-label">Password Baru</label>
+                                    <input type="password" name="password" class="form-control"
+                                        placeholder="Kosongkan jika tidak diganti">
+                                </div>
 
-<div class="col-md-12">
+                                <div class="col-md-12">
 
-<button class="btn btn-success px-4">
-<i class="bi bi-check-circle me-1"></i>
-Update Profil
-</button>
+                                    <button class="btn btn-success px-4">
+                                        <i class="bi bi-check-circle me-1"></i>
+                                        Update Profil
+                                    </button>
 
-</div>
+                                </div>
 
-</div>
+                            </div>
 
-</form>
+                        </form>
 
-</div>
-</div>
-</div>
+                    </div>
+                </div>
+            </div>
 
-</div>
-</div>
-
+        </div>
+    </div>
 @endsection

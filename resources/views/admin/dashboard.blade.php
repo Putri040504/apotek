@@ -1,657 +1,628 @@
 @extends('admin.layout.app')
 
 @section('title')
-Dashboard Admin
+    Dashboard Admin
 @endsection
 
 @push('styles')
+    <style>
+        body {
+            background: #f5f7f9;
+        }
 
-<style>
+        /* CARD */
+        .card {
+            border-radius: 18px;
+            border: 3px solid rgba(25, 135, 84, 0.45);
+            background: white;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            transition: all .3s ease;
+            cursor: pointer;
+        }
 
-body{
-background:#f5f7f9;
-}
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow:
+                0 8px 20px rgba(0, 0, 0, 0.1),
+                0 0 0 4px rgba(25, 135, 84, 0.15);
+        }
 
-/* CARD */
-.card{
-border-radius:18px;
-border:3px solid rgba(25,135,84,0.45);
-background:white;
-box-shadow:0 6px 15px rgba(0,0,0,0.08);
-transition:all .3s ease;
-cursor:pointer;
-}
+        /* HEADER */
+        .card-header {
+            border-bottom: 2px solid rgba(25, 135, 84, 0.25);
+            background: #198754;
+            color: white;
+            font-weight: 600;
+        }
 
-.card:hover{
-transform:translateY(-4px);
-box-shadow:
-0 8px 20px rgba(0,0,0,0.1),
-0 0 0 4px rgba(25,135,84,0.15);
-}
+        /* TABLE */
+        .table thead {
+            background: #198754;
+            color: white;
+        }
 
-/* HEADER */
-.card-header{
-border-bottom:2px solid rgba(25,135,84,0.25);
-background:#198754;
-color:white;
-font-weight:600;
-}
-
-/* TABLE */
-.table thead{
-background:#198754;
-color:white;
-}
-
-.table tbody tr:hover{
-background:#f1fdf6;
-}
-
-</style>
-
+        .table tbody tr:hover {
+            background: #f1fdf6;
+        }
+    </style>
 @endpush
 
 @section('content')
+    <div class="container-fluid">
+
+        <div class="row g-4">
+
+            <!-- CARD 1 -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">Total Obat</small>
+                            <h4 class="fw-bold mb-0 counter" data-target="{{ $total_obat }}">0</h4>
+                        </div>
+                        <i class="bi bi-capsule fs-2 text-success"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 2 -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">Total Supplier</small>
+                            <h4 class="fw-bold mb-0 counter" data-target="{{ $total_supplier }}">0</h4>
+                        </div>
+                        <i class="bi bi-truck fs-2 text-primary"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 3 -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">Total Pengguna</small>
+                            <h4 class="fw-bold mb-0 counter" data-target="{{ $total_user }}">0</h4>
+                        </div>
+                        <i class="bi bi-people fs-2 text-warning"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 4 -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">Obat Kadaluarsa</small>
+                            <h4 class="fw-bold text-danger mb-0">
+                                {{ $obat_kadaluarsa }}
+                            </h4>
+                        </div>
+                        <i class="bi bi-exclamation-triangle fs-2 text-danger"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 5 -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">Total Transaksi</small>
+                            <h4 class="fw-bold mb-0 counter" data-target="{{ $total_transaksi }}">0</h4>
+                        </div>
+                        <i class="bi bi-cash-stack fs-2 text-danger"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 6 -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">Total Nilai Stok</small>
+                            <h4 class="fw-bold text-success mb-0">
+                                Rp {{ number_format($total_nilai_stok) }}
+                            </h4>
+                        </div>
+                        <i class="bi bi-graph-up fs-2 text-success"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 7 -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">Pembelian Hari Ini</small>
+                            <h4 class="fw-bold text-primary mb-0">
+                                Rp {{ number_format($pembelian_hari_ini) }}
+                            </h4>
+                        </div>
+                        <i class="bi bi-cart-plus fs-2 text-primary"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 8 -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">Penjualan Hari Ini</small>
+                            <h4 class="fw-bold text-success mb-0">
+                                Rp {{ number_format($penjualan_hari_ini) }}
+                            </h4>
+                        </div>
+                        <i class="bi bi-cart-check fs-2 text-success"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 9 -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">Profit Hari Ini</small>
+                            <h4 class="fw-bold text-success mb-0">
+                                Rp {{ number_format($profit_hari_ini) }}
+                            </h4>
+                        </div>
+                        <i class="bi bi-currency-dollar fs-2 text-success"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
 
 
-<div class="container-fluid">
-
-<div class="row g-4">
-
-<!-- CARD 1 -->
-<div class="col-md-4">
-<div class="card">
-<div class="card-body d-flex justify-content-between align-items-center">
-<div>
-<small class="text-muted">Total Obat</small>
-<h4 class="fw-bold mb-0 counter" data-target="{{ $total_obat }}">0</h4>
-</div>
-<i class="bi bi-capsule fs-2 text-success"></i>
-</div>
-</div>
-</div>
-
-<!-- CARD 2 -->
-<div class="col-md-4">
-<div class="card shadow-sm">
-<div class="card-body d-flex justify-content-between align-items-center">
-<div>
-<small class="text-muted">Total Supplier</small>
-<h4 class="fw-bold mb-0 counter" data-target="{{ $total_supplier }}">0</h4>
-</div>
-<i class="bi bi-truck fs-2 text-primary"></i>
-</div>
-</div>
-</div>
-
-<!-- CARD 3 -->
-<div class="col-md-4">
-<div class="card shadow-sm">
-<div class="card-body d-flex justify-content-between align-items-center">
-<div>
-<small class="text-muted">Total Pengguna</small>
-<h4 class="fw-bold mb-0 counter" data-target="{{ $total_user }}">0</h4>
-</div>
-<i class="bi bi-people fs-2 text-warning"></i>
-</div>
-</div>
-</div>
-
-<!-- CARD 4 -->
-<div class="col-md-4">
-<div class="card shadow-sm">
-<div class="card-body d-flex justify-content-between align-items-center">
-<div>
-<small class="text-muted">Obat Kadaluarsa</small>
-<h4 class="fw-bold text-danger mb-0">
-{{ $obat_kadaluarsa }}
-</h4>
-</div>
-<i class="bi bi-exclamation-triangle fs-2 text-danger"></i>
-</div>
-</div>
-</div>
-
-<!-- CARD 5 -->
-<div class="col-md-4">
-<div class="card shadow-sm">
-<div class="card-body d-flex justify-content-between align-items-center">
-<div>
-<small class="text-muted">Total Transaksi</small>
-<h4 class="fw-bold mb-0 counter" data-target="{{ $total_transaksi }}">0</h4>
-</div>
-<i class="bi bi-cash-stack fs-2 text-danger"></i>
-</div>
-</div>
-</div>
-
-<!-- CARD 6 -->
-<div class="col-md-4">
-<div class="card shadow-sm">
-<div class="card-body d-flex justify-content-between align-items-center">
-<div>
-<small class="text-muted">Total Nilai Stok</small>
-<h4 class="fw-bold text-success mb-0">
-Rp {{ number_format($total_nilai_stok) }}
-</h4>
-</div>
-<i class="bi bi-graph-up fs-2 text-success"></i>
-</div>
-</div>
-</div>
-
-<!-- CARD 7 -->
-<div class="col-md-4">
-<div class="card shadow-sm">
-<div class="card-body d-flex justify-content-between align-items-center">
-<div>
-<small class="text-muted">Pembelian Hari Ini</small>
-<h4 class="fw-bold text-primary mb-0">
-Rp {{ number_format($pembelian_hari_ini) }}
-</h4>
-</div>
-<i class="bi bi-cart-plus fs-2 text-primary"></i>
-</div>
-</div>
-</div>
-
-<!-- CARD 8 -->
-<div class="col-md-4">
-<div class="card shadow-sm">
-<div class="card-body d-flex justify-content-between align-items-center">
-<div>
-<small class="text-muted">Penjualan Hari Ini</small>
-<h4 class="fw-bold text-success mb-0">
-Rp {{ number_format($penjualan_hari_ini) }}
-</h4>
-</div>
-<i class="bi bi-cart-check fs-2 text-success"></i>
-</div>
-</div>
-</div>
-
-<!-- CARD 9 -->
-<div class="col-md-4">
-<div class="card shadow-sm">
-<div class="card-body d-flex justify-content-between align-items-center">
-<div>
-<small class="text-muted">Profit Hari Ini</small>
-<h4 class="fw-bold text-success mb-0">
-Rp {{ number_format($profit_hari_ini) }}
-</h4>
-</div>
-<i class="bi bi-currency-dollar fs-2 text-success"></i>
-</div>
-</div>
-</div>
+    <!-- GRAFIK DAN FEFO -->
+    <div class="row mt-4 g-4">
 
-</div>
+        <!-- GRAFIK -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
 
-</div>
+                <div class="card-header bg-success text-white">
+                    Grafik Penjualan & Pembelian
+                </div>
 
+                <div class="card-body">
+                    <canvas id="chartPenjualan"></canvas>
+                </div>
 
-<!-- GRAFIK DAN FEFO -->
-<div class="row mt-4 g-4">
+            </div>
+        </div>
 
-<!-- GRAFIK -->
-<div class="col-md-6">
-<div class="card shadow-sm">
+        <!-- PRIORITAS PENJUALAN FEFO -->
+        <div class="col-md-6">
 
-<div class="card-header bg-success text-white">
-Grafik Penjualan & Pembelian
-</div>
+            <div class="card shadow-sm">
 
-<div class="card-body">
-<canvas id="chartPenjualan"></canvas>
-</div>
+                <div class="card-header bg-success text-white">
+                    Prioritas Penjualan Obat (FEFO)
+                </div>
 
-</div>
-</div>
+                <div class="card-body">
 
-<!-- PRIORITAS PENJUALAN FEFO -->
-<div class="col-md-6">
+                    <div class="mb-3 small">
+                        <span class="badge bg-danger">Exp < 30 hari</span>
+                                <span class="badge bg-warning text-dark">Exp < 90 hari</span>
+                                        <span class="badge bg-success">Aman</span>
+                    </div>
 
-<div class="card shadow-sm">
+                    <table class="table table-sm table-striped table-hover">
 
-<div class="card-header bg-success text-white">
-Prioritas Penjualan Obat (FEFO)
-</div>
+                        <thead>
+                            <tr>
+                                <th>Nama Obat</th>
+                                <th>Stok</th>
+                                <th>Tanggal Expired</th>
+                            </tr>
+                        </thead>
 
-<div class="card-body">
+                        <tbody>
 
-<div class="mb-3 small">
-<span class="badge bg-danger">Exp < 30 hari</span>
-<span class="badge bg-warning text-dark">Exp < 90 hari</span>
-<span class="badge bg-success">Aman</span>
-</div>
+                            @foreach ($prioritas_fefo as $batch)
+                                <tr>
 
-<table class="table table-sm table-striped table-hover">
+                                    <td>{{ $batch->obat->nama_obat ?? '-' }}</td>
 
-<thead>
-<tr>
-<th>Nama Obat</th>
-<th>Stok</th>
-<th>Tanggal Expired</th>
-</tr>
-</thead>
+                                    <td>
+                                        <span class="badge bg-primary">
+                                            {{ $batch->jumlah }}
+                                        </span>
+                                    </td>
 
-<tbody>
+                                    <td>
 
-@foreach($prioritas_fefo as $batch)
+                                        @php
+                                            $exp = \Carbon\Carbon::parse($batch->tanggal_exp);
+                                            $today = now();
+                                            $diff = $today->diffInDays($exp, false);
+                                        @endphp
 
-<tr>
+                                        @if ($diff <= 30)
+                                            <span class="badge bg-danger">
+                                                {{ $exp->format('d M Y') }}
+                                            </span>
+                                        @elseif($diff <= 90)
+                                            <span class="badge bg-warning text-dark">
+                                                {{ $exp->format('d M Y') }}
+                                            </span>
+                                        @else
+                                            <span class="badge bg-success">
+                                                {{ $exp->format('d M Y') }}
+                                            </span>
+                                        @endif
 
-<td>{{ $batch->obat->nama_obat ?? '-' }}</td>
+                                    </td>
 
-<td>
-<span class="badge bg-primary">
-{{ $batch->jumlah }}
-</span>
-</td>
+                                </tr>
+                            @endforeach
 
-<td>
+                        </tbody>
 
-@php
-$exp = \Carbon\Carbon::parse($batch->tanggal_exp);
-$today = now();
-$diff = $today->diffInDays($exp, false);
-@endphp
+                    </table>
 
-@if($diff <= 30)
+                </div>
 
-<span class="badge bg-danger">
-{{ $exp->format('d M Y') }}
-</span>
+            </div>
 
-@elseif($diff <= 90)
+        </div>
 
-<span class="badge bg-warning text-dark">
-{{ $exp->format('d M Y') }}
-</span>
+    </div>
 
-@else
 
-<span class="badge bg-success">
-{{ $exp->format('d M Y') }}
-</span>
+    <!-- STOK DAN KADALUARSA -->
+    <div class="row mt-4 g-4">
 
-@endif
+        <div class="col-md-6">
 
-</td>
+            <div class="card shadow-sm">
 
-</tr>
+                <div class="card-header bg-success text-white">
+                    Stok Hampir Habis
+                </div>
 
-@endforeach
+                <div class="card-body">
 
-</tbody>
+                    <ul class="list-group list-group-flush small">
 
-</table>
+                        @foreach ($stok_menipis as $obat)
+                            <li class="list-group-item d-flex justify-content-between">
 
-</div>
+                                {{ $obat->nama_obat }}
 
-</div>
+                                <span class="badge bg-danger">
+                                    {{ $obat->stok }}
+                                </span>
 
-</div>
+                            </li>
+                        @endforeach
 
-</div>
+                    </ul>
 
+                </div>
 
-<!-- STOK DAN KADALUARSA -->
-<div class="row mt-4 g-4">
+            </div>
 
-<div class="col-md-6">
+        </div>
 
-<div class="card shadow-sm">
 
-<div class="card-header bg-success text-white">
-Stok Hampir Habis
-</div>
+        <div class="col-md-6">
 
-<div class="card-body">
+            <div class="card shadow-sm">
 
-<ul class="list-group list-group-flush small">
+                <div class="card-header bg-success text-white">
+                    Obat Hampir Kadaluarsa
+                </div>
 
-@foreach($stok_menipis as $obat)
+                <div class="card-body">
 
-<li class="list-group-item d-flex justify-content-between">
+                    <ul class="list-group list-group-flush small">
 
-{{ $obat->nama_obat }}
+                        @foreach ($obat_hampir_kadaluarsa as $obat)
+                            <li class="list-group-item d-flex justify-content-between">
 
-<span class="badge bg-danger">
-{{ $obat->stok }}
-</span>
+                                {{ $obat->nama_obat }}
 
-</li>
+                                <span class="badge bg-warning text-dark">
+                                    {{ \Carbon\Carbon::parse($obat->tanggal_exp)->format('d M Y') }}
+                                </span>
 
-@endforeach
+                            </li>
+                        @endforeach
 
-</ul>
+                    </ul>
 
-</div>
+                </div>
 
-</div>
+            </div>
 
-</div>
+        </div>
 
+    </div>
 
-<div class="col-md-6">
 
-<div class="card shadow-sm">
+    <!-- TOP OBAT DAN TRANSAKSI -->
+    <div class="row mt-4 g-4">
 
-<div class="card-header bg-success text-white">
-Obat Hampir Kadaluarsa
-</div>
+        <div class="col-md-6">
 
-<div class="card-body">
+            <div class="card shadow-sm">
 
-<ul class="list-group list-group-flush small">
+                <div class="card-header bg-success text-white">
+                    Top 5 Obat Terlaris
+                </div>
 
-@foreach($obat_hampir_kadaluarsa as $obat)
+                <div class="card-body">
 
-<li class="list-group-item d-flex justify-content-between">
+                    <table class="table table-sm">
 
-{{ $obat->nama_obat }}
+                        <thead>
+                            <tr>
+                                <th>Obat</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
 
-<span class="badge bg-warning text-dark">
-{{ \Carbon\Carbon::parse($obat->tanggal_exp)->format('d M Y') }}
-</span>
+                        <tbody>
 
-</li>
+                            @foreach ($obat_terlaris as $item)
+                                <tr>
+                                    <td>{{ $item->nama_obat }}</td>
+                                    <td>{{ $item->total }}</td>
+                                </tr>
+                            @endforeach
 
-@endforeach
+                        </tbody>
 
-</ul>
+                    </table>
 
-</div>
+                </div>
 
-</div>
+            </div>
 
-</div>
+        </div>
 
-</div>
 
+        <div class="col-md-6">
 
-<!-- TOP OBAT DAN TRANSAKSI -->
-<div class="row mt-4 g-4">
+            <div class="card shadow-sm">
 
-<div class="col-md-6">
+                <div class="card-header bg-success text-white">
+                    Transaksi Terbaru
+                </div>
 
-<div class="card shadow-sm">
+                <div class="card-body">
 
-<div class="card-header bg-success text-white">
-Top 5 Obat Terlaris
-</div>
+                    <table class="table table-sm">
 
-<div class="card-body">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
 
-<table class="table table-sm">
+                        <tbody>
 
-<thead>
-<tr>
-<th>Obat</th>
-<th>Total</th>
-</tr>
-</thead>
+                            @foreach ($transaksi_terbaru as $trx)
+                                <tr>
+                                    <td>{{ \Carbon\Carbon::parse($trx->created_at)->format('d M Y') }}</td>
+                                    <td class="text-success">
+                                        Rp {{ number_format($trx->total) }}
+                                    </td>
+                                </tr>
+                            @endforeach
 
-<tbody>
+                        </tbody>
 
-@foreach($obat_terlaris as $item)
+                    </table>
 
-<tr>
-<td>{{ $item->nama_obat }}</td>
-<td>{{ $item->total }}</td>
-</tr>
+                </div>
 
-@endforeach
+            </div>
 
-</tbody>
+        </div>
 
-</table>
-
-</div>
-
-</div>
-
-</div>
-
-
-<div class="col-md-6">
-
-<div class="card shadow-sm">
-
-<div class="card-header bg-success text-white">
-Transaksi Terbaru
-</div>
-
-<div class="card-body">
-
-<table class="table table-sm">
-
-<thead>
-<tr>
-<th>Tanggal</th>
-<th>Total</th>
-</tr>
-</thead>
-
-<tbody>
-
-@foreach($transaksi_terbaru as $trx)
-
-<tr>
-<td>{{ \Carbon\Carbon::parse($trx->created_at)->format('d M Y') }}</td>
-<td class="text-success">
-Rp {{ number_format($trx->total) }}
-</td>
-</tr>
-
-@endforeach
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
+    </div>
 @endsection
 
 @push('scripts')
+    <script>
+        const ctx = document.getElementById('chartPenjualan');
 
-<script>
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: @json($label),
+                datasets: [{
+                        label: 'Penjualan',
+                        data: @json($data_penjualan),
+                        borderColor: '#ff4da6', // pink
+                        backgroundColor: 'rgba(255,77,166,0.2)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Pembelian',
+                        data: @json($data_pembelian),
+                        borderColor: '#3b82f6', // biru
+                        backgroundColor: 'rgba(59,130,246,0.2)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 
-const ctx = document.getElementById('chartPenjualan');
+    <script>
+        const counters = document.querySelectorAll('.counter');
 
-new Chart(ctx,{
-type:'line',
-data:{
-labels:@json($label),
-datasets:[
-{
-label:'Penjualan',
-data:@json($data_penjualan),
-borderColor:'#ff4da6', // pink
-backgroundColor:'rgba(255,77,166,0.2)',
-borderWidth:3,
-tension:0.4,
-fill:true,
-pointRadius:0
-},
-{
-label:'Pembelian',
-data:@json($data_pembelian),
-borderColor:'#3b82f6', // biru
-backgroundColor:'rgba(59,130,246,0.2)',
-borderWidth:3,
-tension:0.4,
-fill:true,
-pointRadius:0
-}
-]
-},
-options:{
-responsive:true,
-plugins:{
-legend:{
-display:true
-}
-},
-scales:{
-y:{
-beginAtZero:true
-}
-}
-}
-});
+        counters.forEach(counter => {
 
-</script>
+            const updateCounter = () => {
 
-<script>
+                const target = +counter.getAttribute('data-target');
+                const current = +counter.innerText;
 
-const counters = document.querySelectorAll('.counter');
+                const increment = target / 80;
 
-counters.forEach(counter => {
+                if (current < target) {
+                    counter.innerText = Math.ceil(current + increment);
+                    setTimeout(updateCounter, 20);
+                } else {
+                    counter.innerText = target;
+                }
 
-const updateCounter = () => {
+            };
 
-const target = +counter.getAttribute('data-target');
-const current = +counter.innerText;
+            updateCounter();
 
-const increment = target / 80;
-
-if(current < target){
-counter.innerText = Math.ceil(current + increment);
-setTimeout(updateCounter,20);
-}else{
-counter.innerText = target;
-}
-
-};
-
-updateCounter();
-
-});
-
-</script>
-
+        });
+    </script>
 @endpush
 
 <style>
+    body {
+        background: #f5f7f9;
+    }
 
-body{
-    background:#f5f7f9;
-}
+    /* CARD */
+    .card {
+        border-radius: 14px;
+        border: 2px solid rgba(25, 135, 84, 0.45);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08) !important;
+        transition: all .3s ease;
+        cursor: pointer;
+    }
 
-/* CARD */
-.card{
-    border-radius:14px;
-    border:2px solid rgba(25,135,84,0.45);
-    box-shadow:0 6px 15px rgba(0,0,0,0.08) !important;
-    transition:all .3s ease;
-    cursor:pointer;
-}
+    /* HOVER */
+    .card:hover {
+        transform: translateY(-6px);
+        box-shadow:
+            0 12px 25px rgba(0, 0, 0, 0.12),
+            0 0 15px rgba(25, 135, 84, 0.35),
+            0 0 30px rgba(25, 135, 84, 0.25),
+            0 0 50px rgba(25, 135, 84, 0.15) !important;
+    }
 
-/* HOVER */
-.card:hover{
-    transform:translateY(-6px);
-    box-shadow:
-        0 12px 25px rgba(0,0,0,0.12),
-        0 0 15px rgba(25,135,84,0.35),
-        0 0 30px rgba(25,135,84,0.25),
-        0 0 50px rgba(25,135,84,0.15) !important;
-}
+    /* HEADER CARD */
+    .card-header {
+        border-bottom: 2px solid rgba(25, 135, 84, 0.25);
+        font-weight: 600;
+        background: #198754 !important;
+        color: white !important;
+    }
 
-/* HEADER CARD */
-.card-header{
-    border-bottom:2px solid rgba(25,135,84,0.25);
-    font-weight:600;
-    background:#198754 !important;
-    color:white !important;
-}
+    /* TABLE */
+    .table {
+        border-radius: 10px;
+        overflow: hidden;
+    }
 
-/* TABLE */
-.table{
-    border-radius:10px;
-    overflow:hidden;
-}
+    .table thead {
+        background: #198754;
+        color: white;
+    }
 
-.table thead{
-    background:#198754;
-    color:white;
-}
+    .table thead th {
+        font-weight: 600;
+        text-align: center;
+    }
 
-.table thead th{
-    font-weight:600;
-    text-align:center;
-}
+    .table tbody tr:hover {
+        background: #f1fdf6;
+        transition: .2s;
+    }
 
-.table tbody tr:hover{
-    background:#f1fdf6;
-    transition:.2s;
-}
+    /* CARD TEXT */
+    .card-body h3 {
+        font-size: 20px;
+        font-weight: 600;
+        margin-top: 4px;
+    }
 
-/* CARD TEXT */
-.card-body h3{
-font-size:20px;
-font-weight:600;
-margin-top:4px;
-}
+    .card-body small {
+        font-size: 12px;
+    }
 
-.card-body small{
-font-size:12px;
-}
+    /* ICON */
+    .card-body i {
+        font-size: 28px !important;
+        opacity: 0.8;
+    }
 
-/* ICON */
-.card-body i{
-font-size:28px !important;
-opacity:0.8;
-}
+    /* TABLE SIZE */
+    .table {
+        font-size: 13px;
+    }
 
-/* TABLE SIZE */
-.table{
-font-size:13px;
-}
+    .table th {
+        font-size: 12px;
+        padding: 6px;
+    }
 
-.table th{
-font-size:12px;
-padding:6px;
-}
+    .table td {
+        font-size: 12px;
+        padding: 6px;
+    }
 
-.table td{
-font-size:12px;
-padding:6px;
-}
+    /* CARD HEADER */
+    .card-header {
+        font-size: 14px;
+        padding: 10px 14px;
+    }
 
-/* CARD HEADER */
-.card-header{
-font-size:14px;
-padding:10px 14px;
-}
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow:
+            0 8px 20px rgba(0, 0, 0, 0.1),
+            0 0 0 4px rgba(25, 135, 84, 0.15);
+    }
 
-.card:hover{
-    transform:translateY(-4px);
-    box-shadow:
-        0 8px 20px rgba(0,0,0,0.1),
-        0 0 0 4px rgba(25,135,84,0.15);
-}
-.card{
-    border-radius:18px;
-    border:3px solid rgba(25,135,84,0.45);
-    background:white;
-    box-shadow:0 6px 15px rgba(0,0,0,0.08) !important;
-    transition:all .3s ease;
-    cursor:pointer;
-}
-.card small{
-font-size:13px;
-}
+    .card {
+        border-radius: 18px;
+        border: 3px solid rgba(25, 135, 84, 0.45);
+        background: white;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08) !important;
+        transition: all .3s ease;
+        cursor: pointer;
+    }
 
-.card h4{
-font-size:20px;
-}
+    .card small {
+        font-size: 13px;
+    }
+
+    .card h4 {
+        font-size: 20px;
+    }
 </style>

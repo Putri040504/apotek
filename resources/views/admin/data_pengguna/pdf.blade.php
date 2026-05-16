@@ -1,74 +1,75 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
-<title>Data Pengguna</title>
+    <title>Data Pengguna</title>
 
-<style>
+    <style>
+        body {
+            font-family: Arial;
+        }
 
-body{
-font-family: Arial;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
 
-table{
-width:100%;
-border-collapse: collapse;
-margin-top:20px;
-}
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
 
-table, th, td{
-border:1px solid black;
-}
+        th,
+        td {
+            padding: 8px;
+            text-align: center;
+        }
 
-th, td{
-padding:8px;
-text-align:center;
-}
-
-h2{
-text-align:center;
-}
-
-</style>
+        h2 {
+            text-align: center;
+        }
+    </style>
 
 </head>
 
 <body>
 
-<h2>APOTEK ZEMA</h2>
-<h3 style="text-align:center">Data Pengguna</h3>
+    <h2>APOTEK ZEMA</h2>
+    <h3 style="text-align:center">Data Pengguna</h3>
 
-<table>
+    <table>
 
-<thead>
+        <thead>
 
-<tr>
-<th>No</th>
-<th>Nama</th>
-<th>Email</th>
-<th>Role</th>
-</tr>
+            <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
 
-</thead>
+        </thead>
 
-<tbody>
+        <tbody>
 
-@foreach($users as $user)
+            @foreach ($users as $user)
+                <tr>
 
-<tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->email }}</td>
+                    <td>{{ $user->role }}</td>
 
-<td>{{ $loop->iteration }}</td>
-<td>{{ $user->name }}</td>
-<td>{{ $user->email }}</td>
-<td>{{ $user->role }}</td>
+                </tr>
+            @endforeach
 
-</tr>
+        </tbody>
 
-@endforeach
-
-</tbody>
-
-</table>
+    </table>
 
 </body>
+
 </html>

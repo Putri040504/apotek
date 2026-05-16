@@ -1,87 +1,88 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Laporan Penjualan Jenis Obat</title>
 
     <style>
+        body {
+            font-family: sans-serif;
+            font-size: 12px;
+        }
 
-    body{
-        font-family: sans-serif;
-        font-size:12px;
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-    table{
-        width:100%;
-        border-collapse: collapse;
-    }
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
 
-    table, th, td{
-        border:1px solid black;
-    }
+        th {
+            background: #eee;
+        }
 
-    th{
-        background:#eee;
-    }
-
-    th, td{
-        padding:6px;
-        text-align:center;
-    }
-
+        th,
+        td {
+            padding: 6px;
+            text-align: center;
+        }
     </style>
 
 </head>
 
 <body>
 
-<h3 style="text-align:center">
-Laporan Penjualan Jenis Obat
-</h3>
+    <h3 style="text-align:center">
+        Laporan Penjualan Jenis Obat
+    </h3>
 
-<table>
+    <table>
 
-<thead>
+        <thead>
 
-<tr>
-<th>No</th>
-<th>No Faktur</th>
-<th>Tanggal</th>
-<th>Harga</th>
-<th>Jumlah</th>
-<th>Total</th>
-</tr>
+            <tr>
+                <th>No</th>
+                <th>No Faktur</th>
+                <th>Tanggal</th>
+                <th>Harga</th>
+                <th>Jumlah</th>
+                <th>Total</th>
+            </tr>
 
-</thead>
+        </thead>
 
-<tbody>
+        <tbody>
 
-@foreach($data as $d)
+            @foreach ($data as $d)
+                <tr>
 
-<tr>
+                    <td>{{ $loop->iteration }}</td>
 
-<td>{{ $loop->iteration }}</td>
+                    <td>{{ $d->no_transaksi }}</td>
 
-<td>{{ $d->no_transaksi }}</td>
+                    <td>{{ $d->tanggal }}</td>
 
-<td>{{ $d->tanggal }}</td>
+                    <td>Rp {{ number_format($d->harga) }}</td>
 
-<td>Rp {{ number_format($d->harga) }}</td>
+                    <td>{{ $d->jumlah }}</td>
 
-<td>{{ $d->jumlah }}</td>
+                    <td>Rp {{ number_format($d->total_penjualan) }}</td>
 
-<td>Rp {{ number_format($d->total_penjualan) }}</td>
+                </tr>
+            @endforeach
 
-</tr>
+        </tbody>
 
-@endforeach
+    </table>
 
-</tbody>
+    <br>
 
-</table>
-
-<br>
-
-<b>Total Penjualan : Rp {{ number_format($total) }}</b>
+    <b>Total Penjualan : Rp {{ number_format($total) }}</b>
 
 </body>
+
 </html>

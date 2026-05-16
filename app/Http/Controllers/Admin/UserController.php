@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Exports\PenggunaExport;
+use App\Exports\UserExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -53,7 +53,7 @@ class UserController extends Controller
 
     public function excel()
 {
-    return Excel::download(new PenggunaExport, 'data_pengguna.xlsx');
+    return Excel::download(new UserExport, 'data_pengguna.xlsx');
 }
 
 public function pdf()

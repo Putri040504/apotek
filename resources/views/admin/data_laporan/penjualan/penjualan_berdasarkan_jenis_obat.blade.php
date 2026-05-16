@@ -1,192 +1,183 @@
 @extends('admin.layout.app')
 
 @section('title')
-Laporan Penjualan Jenis Obat
+    Laporan Penjualan Jenis Obat
 @endsection
 
 @section('content')
 
-<div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
 
-<div>
-<form method="GET" class="d-flex gap-2">
+        <div>
+            <form method="GET" class="d-flex gap-2">
 
-<select name="bulan" class="form-select" style="width:180px">
+                <select name="bulan" class="form-select" style="width:180px">
 
-<option value="">Pilih Bulan</option>
+                    <option value="">Pilih Bulan</option>
 
-@for($i=1;$i<=12;$i++)
-<option value="{{ $i }}" {{ (request('bulan', date('n'))==$i) ? 'selected' : '' }}>
-{{ \Carbon\Carbon::create()->month($i)->locale('id')->translatedFormat('F') }}
-</option>
-@endfor
+                    @for ($i = 1; $i <= 12; $i++)
+                        <option value="{{ $i }}" {{ request('bulan', date('n')) == $i ? 'selected' : '' }}>
+                            {{ \Carbon\Carbon::create()->month($i)->locale('id')->translatedFormat('F') }}
+                        </option>
+                    @endfor
 
-</select>
+                </select>
 
 
-<select name="tahun" class="form-select" style="width:150px">
+                <select name="tahun" class="form-select" style="width:150px">
 
-<option value="">Pilih Tahun</option>
+                    <option value="">Pilih Tahun</option>
 
-@for($t=2026;$t<=2035;$t++)
-<option value="{{ $t }}" {{ (request('tahun', date('Y'))==$t) ? 'selected' : '' }}>
-{{ $t }}
-</option>
-@endfor
+                    @for ($t = 2026; $t <= 2035; $t++)
+                        <option value="{{ $t }}" {{ request('tahun', date('Y')) == $t ? 'selected' : '' }}>
+                            {{ $t }}
+                        </option>
+                    @endfor
 
-</select>
+                </select>
 
 
-<select name="obat" class="form-select" style="width:250px">
+                <select name="obat" class="form-select" style="width:250px">
 
-<option value="">Pilih Obat</option>
+                    <option value="">Pilih Obat</option>
 
-@foreach($obats as $o)
+                    @foreach ($obats as $o)
+                        <option value="{{ $o->id }}" {{ request('obat') == $o->id ? 'selected' : '' }}>
+                            {{ $o->nama_obat }}
+                        </option>
+                    @endforeach
 
-<option value="{{ $o->id }}" {{ request('obat')==$o->id ? 'selected' : '' }}>
-{{ $o->nama_obat }}
-</option>
+                </select>
 
-@endforeach
+                <button class="btn btn-success">
+                    <i class="bi bi-search"></i> Check Data
+                </button>
 
-</select>
+            </form>
+        </div>
 
-<button class="btn btn-success">
-<i class="bi bi-search"></i> Check Data
-</button>
 
-</form>
-</div>
+        <div class="d-flex gap-2">
 
+            <a href="{{ route('laporan.penjualan.jenis.pdf', [
+                'bulan' => request('bulan', date('n')),
+                'tahun' => request('tahun', date('Y')),
+                'obat' => request('obat'),
+            ]) }}"
+                class="btn btn-outline-danger">
 
-<div class="d-flex gap-2">
+                <i class="bi bi-file-earmark-pdf-fill"></i> PDF
 
-<a href="{{ route('laporan.penjualan.jenis.pdf',[
-'bulan'=>request('bulan',date('n')),
-'tahun'=>request('tahun',date('Y')),
-'obat'=>request('obat')
-]) }}"
-class="btn btn-outline-danger">
+            </a>
 
-<i class="bi bi-file-earmark-pdf-fill"></i> PDF
+            <a href="{{ route('laporan.penjualan.jenis.excel', [
+                'bulan' => request('bulan', date('n')),
+                'tahun' => request('tahun', date('Y')),
+                'obat' => request('obat'),
+            ]) }}"
+                class="btn btn-outline-success">
 
-</a>
+                <i class="bi bi-file-earmark-excel"></i> Excel
 
-<a href="{{ route('laporan.penjualan.jenis.excel',[
-'bulan'=>request('bulan',date('n')),
-'tahun'=>request('tahun',date('Y')),
-'obat'=>request('obat')
-]) }}"
-class="btn btn-outline-success">
+            </a>
 
-<i class="bi bi-file-earmark-excel"></i> Excel
+        </div>
 
-</a>
+    </div>
 
-</div>
 
-</div>
+    @if (!empty($data))
+        <div class="card shadow-sm border-0">
 
+            <div class="card-body">
 
-@if(!empty($data))
+                <table id="tabelPenjualan" class="table table-bordered table-hover table-sm text-center align-middle"
+                    style="font-size:14px;">
 
-<div class="card shadow-sm border-0">
+                    <thead class="header-hijau">
 
-<div class="card-body">
+                        <tr>
+                            <th width="60">No</th>
+                            <th>No Faktur</th>
+                            <th>Tanggal Faktur</th>
+                            <th>Harga Jual</th>
+                            <th>Jumlah</th>
+                            <th>Total Penjualan</th>
+                        </tr>
 
-<table id="tabelPenjualan" class="table table-bordered table-hover table-sm text-center align-middle" style="font-size:14px;">
+                    </thead>
 
-<thead class="header-hijau">
+                    <tbody>
 
-<tr>
-<th width="60">No</th>
-<th>No Faktur</th>
-<th>Tanggal Faktur</th>
-<th>Harga Jual</th>
-<th>Jumlah</th>
-<th>Total Penjualan</th>
-</tr>
+                        @foreach ($data as $d)
+                            <tr>
 
-</thead>
+                                <td>{{ $loop->iteration }}</td>
 
-<tbody>
+                                <td>{{ $d->no_transaksi }}</td>
 
-@foreach($data as $d)
+                                <td>{{ \Carbon\Carbon::parse($d->tanggal_transaksi)->translatedFormat('d F Y') }}</td>
 
-<tr>
+                                <td class="text-end">
+                                    Rp {{ number_format($d->harga, 0, ',', '.') }}
+                                </td>
 
-<td>{{ $loop->iteration }}</td>
+                                <td>{{ $d->jumlah }}</td>
 
-<td>{{ $d->no_transaksi }}</td>
+                                <td class="text-end">
+                                    Rp {{ number_format($d->total_penjualan, 0, ',', '.') }}
+                                </td>
 
-<td>{{ \Carbon\Carbon::parse($d->tanggal_transaksi)->translatedFormat('d F Y') }}</td>
+                            </tr>
+                        @endforeach
 
-<td class="text-end">
-Rp {{ number_format($d->harga,0,',','.') }}
-</td>
+                    </tbody>
 
-<td>{{ $d->jumlah }}</td>
+                </table>
 
-<td class="text-end">
-Rp {{ number_format($d->total_penjualan,0,',','.') }}
-</td>
+                <div class="alert alert-success mt-3">
 
-</tr>
+                    Total biaya penjualan adalah sebesar
+                    <b>Rp {{ number_format($total, 0, ',', '.') }}</b>
 
-@endforeach
+                </div>
 
-</tbody>
+            </div>
 
-</table>
+        </div>
+    @endif
 
-<div class="alert alert-success mt-3">
 
-Total biaya penjualan adalah sebesar  
-<b>Rp {{ number_format($total,0,',','.') }}</b>
+    @push('scripts')
+        <script>
+            $(document).ready(function() {
 
-</div>
+                $('#tabelPenjualan').DataTable({
 
-</div>
+                    pageLength: 5,
 
-</div>
+                    lengthMenu: [
+                        [5, 10, 25, 50],
+                        [5, 10, 25, 50]
+                    ],
 
-@endif
+                    language: {
+                        search: "Search:",
+                        lengthMenu: "Tampilkan _MENU_ data",
+                        zeroRecords: "Data tidak ditemukan",
+                        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                        infoEmpty: "Tidak ada data",
+                        infoFiltered: "(difilter dari _MAX_ total data)",
+                        paginate: {
+                            previous: "Sebelumnya",
+                            next: "Berikutnya"
+                        }
+                    }
 
+                });
 
-@push('scripts')
-
-<script>
-
-$(document).ready(function(){
-
-$('#tabelPenjualan').DataTable({
-
-pageLength:5,
-
-lengthMenu:[
-[5,10,25,50],
-[5,10,25,50]
-],
-
-language:{
-search:"Search:",
-lengthMenu:"Tampilkan _MENU_ data",
-zeroRecords:"Data tidak ditemukan",
-info:"Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-infoEmpty:"Tidak ada data",
-infoFiltered:"(difilter dari _MAX_ total data)",
-paginate:{
-previous:"Sebelumnya",
-next:"Berikutnya"
-}
-}
-
-});
-
-});
-
-</script>
-
-@endpush
+            });
+        </script>
+    @endpush
 
 @endsection

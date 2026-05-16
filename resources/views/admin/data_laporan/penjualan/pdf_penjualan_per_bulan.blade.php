@@ -1,93 +1,94 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
-<meta charset="utf-8">
-<title>Laporan Penjualan</title>
+    <meta charset="utf-8">
+    <title>Laporan Penjualan</title>
 
-<style>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 12px;
+        }
 
-body{
-font-family: sans-serif;
-font-size:12px;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
 
-table{
-width:100%;
-border-collapse: collapse;
-margin-top:20px;
-}
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
 
-table,th,td{
-border:1px solid black;
-}
+        th,
+        td {
+            padding: 6px;
+            text-align: center;
+        }
 
-th,td{
-padding:6px;
-text-align:center;
-}
+        th {
+            background: #eaeaea;
+        }
 
-th{
-background:#eaeaea;
-}
-
-.judul{
-text-align:center;
-margin-bottom:20px;
-}
-
-</style>
+        .judul {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
 
 </head>
 
 <body>
 
-<div class="judul">
+    <div class="judul">
 
-<h2>APOTEK ZEMA</h2>
-<h3>Laporan Penjualan Obat</h3>
-<p>Bulan {{ $bulan }} Tahun {{ $tahun }}</p>
+        <h2>APOTEK ZEMA</h2>
+        <h3>Laporan Penjualan Obat</h3>
+        <p>Bulan {{ $bulan }} Tahun {{ $tahun }}</p>
 
-</div>
+    </div>
 
 
-<table>
+    <table>
 
-<thead>
+        <thead>
 
-<tr>
-<th>No</th>
-<th>No Transaksi</th>
-<th>Tanggal</th>
-<th>Jumlah Item</th>
-<th>Total</th>
-</tr>
+            <tr>
+                <th>No</th>
+                <th>No Transaksi</th>
+                <th>Tanggal</th>
+                <th>Jumlah Item</th>
+                <th>Total</th>
+            </tr>
 
-</thead>
+        </thead>
 
-<tbody>
+        <tbody>
 
-@foreach($data as $i => $d)
+            @foreach ($data as $i => $d)
+                <tr>
 
-<tr>
+                    <td>{{ $i + 1 }}</td>
+                    <td>{{ $d->no_transaksi }}</td>
+                    <td>{{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d F Y') }}</td>
+                    <td>{{ $d->jumlah_item }}</td>
+                    <td>Rp {{ number_format($d->total, 0, ',', '.') }}</td>
 
-<td>{{ $i+1 }}</td>
-<td>{{ $d->no_transaksi }}</td>
-<td>{{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d F Y') }}</td>
-<td>{{ $d->jumlah_item }}</td>
-<td>Rp {{ number_format($d->total,0,',','.') }}</td>
+                </tr>
+            @endforeach
 
-</tr>
+        </tbody>
 
-@endforeach
+    </table>
 
-</tbody>
+    <br>
 
-</table>
-
-<br>
-
-<h3>Total Penjualan : Rp {{ number_format($total,0,',','.') }}</h3>
+    <h3>Total Penjualan : Rp {{ number_format($total, 0, ',', '.') }}</h3>
 
 </body>
+
 </html>

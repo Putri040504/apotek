@@ -1,204 +1,191 @@
 @extends('admin.layout.app')
 
 @section('title')
-Data Supplier
+    Data Supplier
 @endsection
 
 @section('content')
+    <style>
+        #tabelSupplier {
+            font-size: 13px;
+        }
 
-<style>
+        #tabelSupplier th {
+            font-size: 12px;
+            padding: 6px;
+        }
 
-#tabelSupplier{
-font-size:13px;
-}
+        #tabelSupplier td {
+            padding: 5px;
+        }
+    </style>
 
-#tabelSupplier th{
-font-size:12px;
-padding:6px;
-}
+    <div class="d-flex justify-content-between align-items-center mb-3">
 
-#tabelSupplier td{
-padding:5px;
-}
+        <div>
 
-</style>
+            <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#modalTambah">
+                <i class="bi bi-plus-circle"></i> Tambah Data
+            </button>
 
-<div class="d-flex justify-content-between align-items-center mb-3">
+        </div>
 
-<div>
+        <div>
 
-<button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#modalTambah">
-<i class="bi bi-plus-circle"></i> Tambah Data
-</button>
+            <a href="{{ route('supplier.excel') }}" class="btn btn-outline-success me-2">
+                <i class="bi bi-file-earmark-excel-fill"></i> Excel
+            </a>
 
-</div>
+            <a href="{{ route('supplier.pdf') }}" class="btn btn-outline-danger">
+                <i class="bi bi-file-earmark-pdf-fill"></i> PDF
+            </a>
 
-<div>
+        </div>
 
-<a href="{{ route('supplier.excel') }}" class="btn btn-outline-success me-2">
-<i class="bi bi-file-earmark-excel-fill"></i> Excel
-</a>
-
-<a href="{{ route('supplier.pdf') }}" class="btn btn-outline-danger">
-<i class="bi bi-file-earmark-pdf-fill"></i> PDF
-</a>
-
-</div>
-
-</div>
+    </div>
 
 
-<div class="card">
-<div class="card-body">
+    <div class="card">
+        <div class="card-body">
 
-<table id="tabelSupplier" class="table table-bordered align-middle w-100">
+            <table id="tabelSupplier" class="table table-bordered align-middle w-100">
 
-<thead class="header-hijau text-start align-top">
-<tr>
-<th width="60">No</th>
-<th>Kode Supplier</th>
-<th>Nama Supplier</th>
-<th>Nama Obat</th>
-<th>Alamat</th>
-<th>Email</th>
-<th>No Telp</th>
-<th width="120">Aksi</th>
-</tr>
-</thead>
+                <thead class="header-hijau text-start align-top">
+                    <tr>
+                        <th width="60">No</th>
+                        <th>Kode Supplier</th>
+                        <th>Nama Supplier</th>
+                        <th>Nama Obat</th>
+                        <th>Alamat</th>
+                        <th>Email</th>
+                        <th>No Telp</th>
+                        <th width="120">Aksi</th>
+                    </tr>
+                </thead>
 
-<tbody>
+                <tbody>
 
-@foreach($supplier as $s)
+                    @foreach ($supplier as $s)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $s->kode_supplier }}</td>
+                            <td>{{ $s->nama_supplier }}</td>
 
-<tr>
-<td>{{ $loop->iteration }}</td>
-<td>{{ $s->kode_supplier }}</td>
-<td>{{ $s->nama_supplier }}</td>
+                            <td>
+                                @forelse($s->obat as $o)
+                                    {{ $o->nama_obat }} <br>
+                                @empty
+                                    -
+                                @endforelse
+                            </td>
 
-<td>
-@forelse($s->obat as $o)
-{{ $o->nama_obat }} <br>
-@empty
--
-@endforelse
-</td>
+                            <td>{{ $s->alamat }}</td>
+                            <td>{{ $s->email }}</td>
+                            <td>{{ $s->no_telp }}</td>
 
-<td>{{ $s->alamat }}</td>
-<td>{{ $s->email }}</td>
-<td>{{ $s->no_telp }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal"
+                                    data-bs-target="#modalEdit{{ $s->id }}">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
 
-<td>
-<button class="btn btn-sm btn-outline-success"
-data-bs-toggle="modal"
-data-bs-target="#modalEdit{{ $s->id }}">
-<i class="bi bi-pencil-square"></i>
-</button>
+                                <form id="delete-form-{{ $s->id }}" action="{{ route('supplier.destroy', $s->id) }}"
+                                    method="POST" style="display:inline">
+                                    @csrf
+                                    @method('DELETE')
 
-<form id="delete-form-{{ $s->id }}" action="{{ route('supplier.destroy',$s->id) }}" method="POST" style="display:inline">
-@csrf
-@method('DELETE')
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                        onclick="confirmDelete({{ $s->id }})">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
 
-<button type="button"
-class="btn btn-sm btn-outline-danger"
-onclick="confirmDelete({{ $s->id }})">
-<i class="bi bi-trash"></i>
-</button>
-</form>
-</td>
+                        </tr>
 
-</tr>
+                        @include('admin.data_supplier.modal_edit')
+                    @endforeach
 
-@include('admin.data_supplier.modal_edit')
+                </tbody>
+            </table>
 
-@endforeach
+        </div>
+    </div>
 
-</tbody>
-</table>
+    @include('admin.data_supplier.modal_tambah')
 
-</div>
-</div>
+    @push('scripts')
+        <script>
+            $(document).ready(function() {
 
-@include('admin.data_supplier.modal_tambah')
+                $('#tabelSupplier').DataTable({
 
-@push('scripts')
+                    pageLength: 5,
 
-<script>
+                    lengthMenu: [
+                        [5, 10, 25, 50],
+                        [5, 10, 25, 50]
+                    ],
 
-$(document).ready(function(){
+                    language: {
+                        search: "Search:",
+                        lengthMenu: "Tampilkan _MENU_ data",
+                        zeroRecords: "Data tidak ditemukan",
+                        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                        infoEmpty: "Tidak ada data",
+                        infoFiltered: "(difilter dari _MAX_ total data)",
+                        paginate: {
+                            previous: "Sebelumnya",
+                            next: "Berikutnya"
+                        }
+                    }
 
-$('#tabelSupplier').DataTable({
+                });
 
-pageLength:5,
+            });
 
-lengthMenu:[
-[5,10,25,50],
-[5,10,25,50]
-],
+            @if (session('success'))
 
-language:{
-search:"Search:",
-lengthMenu:"Tampilkan _MENU_ data",
-zeroRecords:"Data tidak ditemukan",
-info:"Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-infoEmpty:"Tidak ada data",
-infoFiltered:"(difilter dari _MAX_ total data)",
-paginate:{
-previous:"Sebelumnya",
-next:"Berikutnya"
-}
-}
-
-});
-
-});
-
-@if(session('success'))
-
-Swal.fire({
-icon:'success',
-title:'Berhasil',
-text:'{{ session('success') }}',
-timer:2000,
-showConfirmButton:false
-})
-
-@endif
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: '{{ session('success') }}',
+                    timer: 2000,
+                    showConfirmButton: false
+                })
+            @endif
 
 
-@if ($errors->any())
+            @if ($errors->any())
 
-Swal.fire({
-icon:'error',
-title:'Gagal',
-text:'{{ $errors->first() }}'
-})
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: '{{ $errors->first() }}'
+                })
+            @endif
 
-@endif
 
+            function confirmDelete(id) {
 
-function confirmDelete(id){
+                Swal.fire({
+                    title: 'Yakin hapus data?',
+                    text: "Data tidak bisa dikembalikan!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
 
-Swal.fire({
-title: 'Yakin hapus data?',
-text: "Data tidak bisa dikembalikan!",
-icon: 'warning',
-showCancelButton: true,
-confirmButtonColor: '#d33',
-cancelButtonColor: '#6c757d',
-confirmButtonText: 'Ya, hapus!',
-cancelButtonText: 'Batal'
-}).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('delete-form-' + id).submit();
+                    }
 
-if (result.isConfirmed) {
-document.getElementById('delete-form-'+id).submit();
-}
+                })
 
-})
-
-}
-
-</script>
-
-@endpush
-
+            }
+        </script>
+    @endpush
 @endsection

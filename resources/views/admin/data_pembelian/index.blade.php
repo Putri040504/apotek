@@ -1,400 +1,399 @@
 @extends('admin.layout.app')
 
 @section('title')
-Data Pembelian
+    Data Pembelian
 @endsection
 
-@if(session('success'))
-<script>
-Swal.fire({
-icon:'success',
-title:'Berhasil',
-text:'{{ session('success') }}',
-timer:2000,
-showConfirmButton:false
-});
-</script>
+@if (session('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: '{{ session('success') }}',
+            timer: 2000,
+            showConfirmButton: false
+        });
+    </script>
 @endif
 
 
-@if(session('error'))
-<script>
-Swal.fire({
-icon:'error',
-title:'Gagal',
-text:'{{ session('error') }}'
-});
-</script>
+@if (session('error'))
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal',
+            text: '{{ session('error') }}'
+        });
+    </script>
 @endif
 
 @section('content')
+    <style>
+        #tabelPembelian {
+            font-size: 13px;
+        }
 
-<style>
-#tabelPembelian{
-font-size:13px;
-}
+        #tabelPembelian th {
+            font-size: 12px;
+            padding: 6px;
+        }
 
-#tabelPembelian th{
-font-size:12px;
-padding:6px;
-}
+        #tabelPembelian td {
+            padding: 5px;
+        }
+    </style>
 
-#tabelPembelian td{
-padding:5px;
-}
-</style>
+    <div class="d-flex justify-content-end align-items-center mb-3">
 
-<div class="d-flex justify-content-end align-items-center mb-3">
+        <div>
 
-<div>
+            <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#modalTambah">
+                <i class="bi bi-plus-circle"></i> Tambah Data
+            </button>
 
-<button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#modalTambah">
-<i class="bi bi-plus-circle"></i> Tambah Data
-</button>
+            <button class="btn btn-danger position-relative" data-bs-toggle="modal" data-bs-target="#modalKeranjang">
 
-<button class="btn btn-danger position-relative" data-bs-toggle="modal" data-bs-target="#modalKeranjang">
+                <i class="bi bi-cart3"></i>
 
-<i class="bi bi-cart3"></i>
+                @if ($keranjang->count() > 0)
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
+                        {{ $keranjang->count() }}
+                    </span>
+                @endif
 
-@if($keranjang->count() > 0)
-<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
-{{ $keranjang->count() }}
-</span>
-@endif
+            </button>
 
-</button>
+        </div>
 
-</div>
+    </div>
 
-</div>
 
+    <div class="card">
+        <div class="card-body">
 
-<div class="card">
-<div class="card-body">
+            <table id="tabelPembelian" class="table table-bordered text-center align-middle">
 
-<table id="tabelPembelian" class="table table-bordered text-center align-middle">
+                <thead class="header-hijau text-center align-top">
 
-<thead class="header-hijau text-center align-top">
+                    <tr>
 
-<tr>
+                        <th width="60">No</th>
+                        <th>No Transaksi</th>
+                        <th>Tanggal Transaksi</th>
+                        <th>Nama Supplier</th>
+                        <th>Nama Obat</th>
+                        <th>Tanggal EXP</th>
+                        <th>Harga</th>
+                        <th>Jumlah Beli</th>
+                        <th>Total Biaya</th>
+                        <th width="120">Aksi</th>
 
-<th width="60">No</th>
-<th>No Transaksi</th>
-<th>Tanggal Transaksi</th>
-<th>Nama Supplier</th>
-<th>Nama Obat</th>
-<th>Tanggal EXP</th>
-<th>Harga</th>
-<th>Jumlah Beli</th>
-<th>Total Biaya</th>
-<th width="120">Aksi</th>
+                    </tr>
 
-</tr>
+                </thead>
 
-</thead>
+                <tbody>
 
-<tbody>
+                    @php $no = 1; @endphp
 
-@php $no = 1; @endphp
+                    @foreach ($pembelian as $p)
+                        @foreach ($p->detail as $d)
+                            <tr>
 
-@foreach($pembelian as $p)
+                                <td class="text-center">{{ $no++ }}</td>
 
-    @foreach($p->detail as $d)
+                                <td class="text-center">{{ $p->kode_transaksi ?? '-' }}</td>
 
-    <tr>
+                                <td class="text-center">{{ $p->tanggal }}</td>
 
-        <td class="text-center">{{ $no++ }}</td>
+                                <td class="text-start">{{ optional($p->supplier)->nama_supplier ?? '-' }}</td>
 
-        <td class="text-center">{{ $p->kode_transaksi ?? '-' }}</td>
+                                <td class="text-start">{{ optional($d->obat)->nama_obat ?? '-' }}</td>
 
-        <td class="text-center">{{ $p->tanggal }}</td>
+                                <td class="text-center">{{ optional($d->obat)->tanggal_exp ?? '-' }}</td>
 
-        <td class="text-start">{{ optional($p->supplier)->nama_supplier ?? '-' }}</td>
+                                <td class="text-end">Rp {{ number_format($d->harga) }}</td>
 
-        <td class="text-start">{{ optional($d->obat)->nama_obat ?? '-' }}</td>
+                                <td class="text-center">{{ $d->jumlah }}</td>
 
-        <td class="text-center">{{ optional($d->obat)->tanggal_exp ?? '-' }}</td>
+                                <td class="text-end">Rp {{ number_format($d->subtotal) }}</td>
 
-        <td class="text-end">Rp {{ number_format($d->harga) }}</td>
+                                <td class="text-center">
 
-        <td class="text-center">{{ $d->jumlah }}</td>
+                                    <!-- CETAK -->
+                                    <a href="{{ route('pembelian.cetak', $p->id) }}" class="btn btn-sm btn-outline-primary"
+                                        target="_blank">
 
-        <td class="text-end">Rp {{ number_format($d->subtotal) }}</td>
+                                        <i class="bi bi-printer"></i>
 
-        <td class="text-center">
+                                    </a>
 
-    <!-- CETAK -->
-    <a href="{{ route('pembelian.cetak',$p->id) }}" 
-    class="btn btn-sm btn-outline-primary"
-    target="_blank">
+                                    <!-- HAPUS -->
+                                    <form id="delete-form-{{ $p->id }}"
+                                        action="{{ route('pembelian.destroy', $p->id) }}" method="POST"
+                                        style="display:inline">
 
-    <i class="bi bi-printer"></i>
+                                        @csrf
+                                        @method('DELETE')
 
-    </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                            onclick="confirmDelete({{ $p->id }})">
 
-    <!-- HAPUS -->
-<form id="delete-form-{{ $p->id }}" action="{{ route('pembelian.destroy',$p->id) }}" method="POST" style="display:inline">
+                                            <i class="bi bi-trash"></i>
 
-@csrf
-@method('DELETE')
+                                        </button>
 
-<button type="button"
-class="btn btn-sm btn-outline-danger"
-onclick="confirmDelete({{ $p->id }})">
+                                    </form>
 
-<i class="bi bi-trash"></i>
+                                </td>
 
-</button>
+                            </tr>
+                        @endforeach
+                    @endforeach
 
-</form>
+                </tbody>
 
-</td>
+            </table>
 
-    </tr>
+        </div>
+    </div>
 
-    @endforeach
+    @include('admin.data_pembelian.modal_tambah')
+    @include('admin.data_pembelian.modal_keranjang')
 
-@endforeach
+    @push('scripts')
+        <script>
+            $(document).ready(function() {
 
-</tbody>
+                $('#tabelPembelian').DataTable({
 
-</table>
+                    pageLength: 5,
 
-</div>
-</div>
+                    lengthMenu: [
+                        [5, 10, 25, 50],
+                        [5, 10, 25, 50]
+                    ],
 
-@include('admin.data_pembelian.modal_tambah')
-@include('admin.data_pembelian.modal_keranjang')
+                    language: {
+                        search: "Search:",
+                        lengthMenu: "Tampilkan _MENU_ data",
+                        zeroRecords: "Data tidak ditemukan",
+                        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                        infoEmpty: "Tidak ada data",
+                        infoFiltered: "(difilter dari _MAX_ total data)",
+                        paginate: {
+                            previous: "Sebelumnya",
+                            next: "Berikutnya"
+                        }
+                    }
 
-@push('scripts')
-
-<script>
-
-$(document).ready(function(){
-
-$('#tabelPembelian').DataTable({
-
-pageLength:5,
-
-lengthMenu:[
-[5,10,25,50],
-[5,10,25,50]
-],
-
-language:{
-search:"Search:",
-lengthMenu:"Tampilkan _MENU_ data",
-zeroRecords:"Data tidak ditemukan",
-info:"Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-infoEmpty:"Tidak ada data",
-infoFiltered:"(difilter dari _MAX_ total data)",
-paginate:{
-previous:"Sebelumnya",
-next:"Berikutnya"
-}
-}
-
-});
-
-});
-
-function confirmDelete(id){
-
-Swal.fire({
-title: 'Yakin hapus data?',
-text: "Data tidak bisa dikembalikan!",
-icon: 'warning',
-showCancelButton: true,
-confirmButtonColor: '#d33',
-cancelButtonColor: '#6c757d',
-confirmButtonText: 'Ya, hapus!',
-cancelButtonText: 'Batal'
-}).then((result) => {
-
-if (result.isConfirmed) {
-document.getElementById('delete-form-'+id).submit();
-}
-
-})
-
-}
-
-</script>
-
-<script>
-
-$(document).ready(function(){
-
-$('.select2').select2({
-dropdownParent: $('#modalTambah'),
-width:'100%'
-});
-
-});
-
-const adminObatLookupUrl = @json(route('admin.obat.lookup'));
-
-$('#btnPembelianScan').on('click', function () {
-    if (!window.BarcodeScanner) {
-        Swal.fire({ icon: 'error', title: 'Scanner tidak tersedia' });
-        return;
-    }
-
-    BarcodeScanner.open({
-        continuous: false,
-        debounceMs: 1500,
-        onDetected: async function (code) {
-            try {
-                const res = await fetch(adminObatLookupUrl + '?kode=' + encodeURIComponent(code), {
-                    headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
                 });
-                const data = await res.json();
-                if (!res.ok) {
-                    throw new Error(data.error || 'Obat tidak ditemukan');
-                }
 
-                $('#obat').val(data.id).trigger('change');
+            });
 
-                const detail = data.barcode
-                    ? 'Internal: ' + data.kode_obat + ' · EAN: ' + data.barcode
-                    : 'Kode: ' + data.kode_obat;
+            function confirmDelete(id) {
 
                 Swal.fire({
-                    icon: 'success',
-                    title: data.nama_obat,
-                    text: detail,
-                    timer: 1500,
-                    showConfirmButton: false,
-                });
-            } catch (err) {
-                Swal.fire({ icon: 'error', title: err.message || 'Scan gagal' });
+                    title: 'Yakin hapus data?',
+                    text: "Data tidak bisa dikembalikan!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+                        document.getElementById('delete-form-' + id).submit();
+                    }
+
+                })
+
             }
-        },
-    });
-});
+        </script>
+
+        <script>
+            $(document).ready(function() {
+
+                $('.select2').select2({
+                    dropdownParent: $('#modalTambah'),
+                    width: '100%'
+                });
+
+            });
+
+            const adminObatLookupUrl = @json(route('admin.obat.lookup'));
+
+            $('#btnPembelianScan').on('click', function() {
+                if (!window.BarcodeScanner) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Scanner tidak tersedia'
+                    });
+                    return;
+                }
+
+                BarcodeScanner.open({
+                    continuous: false,
+                    debounceMs: 1500,
+                    onDetected: async function(code) {
+                        try {
+                            const res = await fetch(adminObatLookupUrl + '?kode=' + encodeURIComponent(
+                                code), {
+                                    headers: {
+                                        Accept: 'application/json',
+                                        'X-Requested-With': 'XMLHttpRequest'
+                                    },
+                                });
+                            const data = await res.json();
+                            if (!res.ok) {
+                                throw new Error(data.error || 'Obat tidak ditemukan');
+                            }
+
+                            $('#obat').val(data.id).trigger('change');
+
+                            const detail = data.barcode ?
+                                'Internal: ' + data.kode_obat + ' · EAN: ' + data.barcode :
+                                'Kode: ' + data.kode_obat;
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: data.nama_obat,
+                                text: detail,
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        } catch (err) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: err.message || 'Scan gagal'
+                            });
+                        }
+                    },
+                });
+            });
 
 
-// isi otomatis data obat
+            // isi otomatis data obat
 
-$('#obat').on('change', function(){
+            $('#obat').on('change', function() {
 
-let selected = $(this).find(':selected');
+                let selected = $(this).find(':selected');
 
-let kode = selected.data('kode');
-let harga = selected.data('harga');
+                let kode = selected.data('kode');
+                let harga = selected.data('harga');
 
-$('#kode_obat').val(kode);
-$('#harga').val(formatRupiah(harga));
+                $('#kode_obat').val(kode);
+                $('#harga').val(formatRupiah(harga));
 
-hitungTotal();
+                hitungTotal();
 
-cekExp();
+                cekExp();
 
-});
-
-
-// hitung total otomatis
-
-$('#jumlah').on('keyup change', function(){
-
-hitungTotal();
-
-});
-
-function hitungTotal(){
-
-let harga = $('#harga').val().replace(/\D/g,'');
-let jumlah = $('#jumlah').val();
-
-if(harga && jumlah){
-
-let total = harga * jumlah;
-
-$('#total').val(formatRupiah(total));
-
-}
-
-}
+            });
 
 
-// format rupiah
+            // hitung total otomatis
 
-function formatRupiah(angka){
+            $('#jumlah').on('keyup change', function() {
 
-return new Intl.NumberFormat('id-ID',{
-style:'currency',
-currency:'IDR',
-minimumFractionDigits:0
-}).format(angka);
+                hitungTotal();
 
-}
+            });
+
+            function hitungTotal() {
+
+                let harga = $('#harga').val().replace(/\D/g, '');
+                let jumlah = $('#jumlah').val();
+
+                if (harga && jumlah) {
+
+                    let total = harga * jumlah;
+
+                    $('#total').val(formatRupiah(total));
+
+                }
+
+            }
 
 
-// cek exp hampir kadaluarsa
+            // format rupiah
 
-function cekExp(){
+            function formatRupiah(angka) {
 
-let exp = new Date($('#exp').val());
-let today = new Date();
+                return new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0
+                }).format(angka);
 
-let selisih = (exp - today) / (1000*60*60*24);
+            }
 
-if(selisih < 90){
 
-$('#exp').css({
-'background':'#ffe5e5',
-'color':'red',
-'font-weight':'600'
-});
+            // cek exp hampir kadaluarsa
 
-}
+            function cekExp() {
 
-}
+                let exp = new Date($('#exp').val());
+                let today = new Date();
 
-// centang semua
-$('#checkAll').on('click', function(){
+                let selisih = (exp - today) / (1000 * 60 * 60 * 24);
 
-$('.checkItem').prop('checked', this.checked);
+                if (selisih < 90) {
 
-});
+                    $('#exp').css({
+                        'background': '#ffe5e5',
+                        'color': 'red',
+                        'font-weight': '600'
+                    });
 
-$('#formTambah').on('submit', function(e){
+                }
 
-let supplier = $('[name=supplier_id]').val();
-let obat = $('#obat').val();
-let qty = $('#jumlah').val();
+            }
 
-if(!supplier || !obat || !qty){
+            // centang semua
+            $('#checkAll').on('click', function() {
 
-e.preventDefault();
+                $('.checkItem').prop('checked', this.checked);
 
-Swal.fire({
-icon:'warning',
-title:'Data belum lengkap',
-text:'Semua field wajib diisi!'
-});
+            });
 
-}
+            $('#formTambah').on('submit', function(e) {
 
-});
+                let supplier = $('[name=supplier_id]').val();
+                let obat = $('#obat').val();
+                let qty = $('#jumlah').val();
 
-$('#formCheckout').on('submit', function(e){
+                if (!supplier || !obat || !qty) {
 
-if($('input[name="keranjang_id[]"]:checked').length == 0){
+                    e.preventDefault();
 
-e.preventDefault();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Data belum lengkap',
+                        text: 'Semua field wajib diisi!'
+                    });
 
-Swal.fire({
-icon:'warning',
-title:'Pilih Data',
-text:'Centang minimal 1 item keranjang'
-});
+                }
 
-}
+            });
 
-});
+            $('#formCheckout').on('submit', function(e) {
 
-</script>
-@endpush
+                if ($('input[name="keranjang_id[]"]:checked').length == 0) {
 
+                    e.preventDefault();
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Pilih Data',
+                        text: 'Centang minimal 1 item keranjang'
+                    });
+
+                }
+
+            });
+        </script>
+    @endpush
 @endsection
