@@ -40,7 +40,14 @@ if [ "$APP_ENV" = "production" ] || [ "$RUN_OPTIMIZE" = "true" ]; then
     php artisan route:clear
     php artisan view:clear
     php artisan config:cache
-    php artisan route:cache
+
+    if php artisan route:cache; then
+        echo "[entrypoint] Route cache OK"
+    else
+        echo "[entrypoint] WARNING: route:cache failed — app tetap jalan tanpa route cache"
+        php artisan route:clear
+    fi
+
     php artisan view:cache
 fi
 

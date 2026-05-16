@@ -124,7 +124,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('pembelian/checkout', [PembelianController::class,'checkout'])
         ->name('pembelian.checkout');
     
-    Route::get('/admin/pembelian/cetak/{id}', [PembelianController::class,'cetak'])
+    Route::get('pembelian/cetak/{id}', [PembelianController::class, 'cetak'])
         ->name('pembelian.cetak');
 
 
@@ -252,9 +252,6 @@ Route::prefix('kasir')->middleware(['auth'])->group(function () {
     
     Route::get('/riwayat/detail/{id}', [PenjualanController::class,'detailModal'])
     ->name('riwayat.detail');
-
-    Route::get('/admin/pembelian/cetak/{id}', [PembelianController::class,'cetak'])
-    ->name('pembelian.cetak');
 
     Route::get('/riwayat/excel',[PenjualanController::class,'exportExcel']);
     Route::get('/riwayat/pdf',[PenjualanController::class,'exportPDF']);
