@@ -86,36 +86,27 @@ class Obat extends Model
 
         $tokens = preg_split('/\s+/u', $term, -1, PREG_SPLIT_NO_EMPTY) ?: [$term];
         $primary = $tokens[0];
-        $usePrefixOnly = count($tokens) === 1 && mb_strlen($primary) <= 2;
 
         foreach ($tokens as $token) {
-            $escaped = static::escapeLike($token);
-            $like = '%'.$escaped.'%';
-            $prefix = $escaped.'%';
+            $lowerPattern = mb_strtolower('%'.static::escapeLike($token).'%', 'UTF-8');
 
-            $query->where(function (Builder $q) use ($like, $prefix, $usePrefixOnly) {
-                if ($usePrefixOnly) {
-                    $q->where('nama_obat', 'like', $prefix)
-                        ->orWhere('kode_obat', 'like', $prefix)
-                        ->orWhere('barcode', 'like', $prefix);
-                } else {
-                    $q->where('nama_obat', 'like', $like)
-                        ->orWhere('kode_obat', 'like', $like)
-                        ->orWhere('barcode', 'like', $like);
-                }
+            $query->where(function (Builder $q) use ($lowerPattern) {
+                $q->whereRaw('LOWER(nama_obat) LIKE ?', [$lowerPattern])
+                    ->orWhereRaw('LOWER(kode_obat) LIKE ?', [$lowerPattern])
+                    ->orWhereRaw('LOWER(barcode) LIKE ?', [$lowerPattern]);
             });
         }
 
         $escapedPrimary = static::escapeLike($primary);
-        $prefixPrimary = $escapedPrimary.'%';
-        $likePrimary = '%'.$escapedPrimary.'%';
+        $prefixPrimary = mb_strtolower($escapedPrimary.'%', 'UTF-8');
+        $likePrimary = mb_strtolower('%'.$escapedPrimary.'%', 'UTF-8');
 
         return $query
             ->orderByRaw(
                 'CASE
-                    WHEN nama_obat LIKE ? THEN 0
-                    WHEN kode_obat LIKE ? OR barcode LIKE ? THEN 1
-                    WHEN nama_obat LIKE ? THEN 2
+                    WHEN LOWER(nama_obat) LIKE ? THEN 0
+                    WHEN LOWER(kode_obat) LIKE ? OR LOWER(barcode) LIKE ? THEN 1
+                    WHEN LOWER(nama_obat) LIKE ? THEN 2
                     ELSE 3
                 END',
                 [$prefixPrimary, $prefixPrimary, $prefixPrimary, $likePrimary]

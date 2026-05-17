@@ -951,3 +951,52 @@
 #36 C:/Users/Server/Project gueh/apotek-zema/artisan(13): Illuminate/Foundation/Application->handleCommand(Object(Symfony/Component/Console/Input/ArgvInput))
 #37 {main}
 "} 
+[2026-05-17 16:42:23] local.ERROR: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it (Connection: mysql, SQL: select `nama_obat` from `obats` where exists (select * from `stok_batches` where `obats`.`id` = `stok_batches`.`obat_id` and `jumlah` > 0 and date(`tanggal_exp`) > 2026-06-16) and (LOWER(nama_obat) LIKE %c% or LOWER(kode_obat) LIKE %c% or LOWER(barcode) LIKE %c%) order by CASE
+                    WHEN LOWER(nama_obat) LIKE c% THEN 0
+                    WHEN LOWER(kode_obat) LIKE c% OR LOWER(barcode) LIKE c% THEN 1
+                    WHEN LOWER(nama_obat) LIKE %c% THEN 2
+                    ELSE 3
+                END, `nama_obat` asc limit 25) {"exception":"[object] (Illuminate\\Database\\QueryException(code: 2002): SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it (Connection: mysql, SQL: select `nama_obat` from `obats` where exists (select * from `stok_batches` where `obats`.`id` = `stok_batches`.`obat_id` and `jumlah` > 0 and date(`tanggal_exp`) > 2026-06-16) and (LOWER(nama_obat) LIKE %c% or LOWER(kode_obat) LIKE %c% or LOWER(barcode) LIKE %c%) order by CASE
+                    WHEN LOWER(nama_obat) LIKE c% THEN 0
+                    WHEN LOWER(kode_obat) LIKE c% OR LOWER(barcode) LIKE c% THEN 1
+                    WHEN LOWER(nama_obat) LIKE %c% THEN 2
+                    ELSE 3
+                END, `nama_obat` asc limit 25) at C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connection.php:825)
+[stacktrace]
+#0 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connection.php(979): Illuminate/Database/Connection->runQueryCallback('select `nama_ob...', Array, Object(Closure))
+#1 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connection.php(958): Illuminate/Database/Connection->tryAgainIfCausedByLostConnection(Object(Illuminate/Database/QueryException), 'select `nama_ob...', Array, Object(Closure))
+#2 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connection.php(781): Illuminate/Database/Connection->handleQueryException(Object(Illuminate/Database/QueryException), 'select `nama_ob...', Array, Object(Closure))
+#3 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connection.php(398): Illuminate/Database/Connection->run('select `nama_ob...', Array, Object(Closure))
+#4 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(3106): Illuminate/Database/Connection->select('select `nama_ob...', Array, true)
+#5 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(3362): Illuminate/Database/Query/Builder->runSelect()
+#6 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(3676): Illuminate/Database/Query/Builder->{closure:Illuminate/Database/Query/Builder::pluck():3360}()
+#7 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(3358): Illuminate/Database/Query/Builder->onceWithColumns(Array, Object(Closure))
+#8 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(991): Illuminate/Database/Query/Builder->pluck('nama_obat', NULL)
+#9 C:/Users/Server/Project gueh/apotek-zema/storage/framework/test-search.php(13): Illuminate/Database/Eloquent/Builder->pluck('nama_obat')
+#10 {main}
+
+[previous exception] [object] (PDOException(code: 2002): SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it at C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php:67)
+[stacktrace]
+#0 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(67): PDO::connect('mysql:host=127....', 'root', Object(SensitiveParameterValue), Array)
+#1 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(85): Illuminate/Database/Connectors/Connector->createPdoConnection('mysql:host=127....', 'root', Object(SensitiveParameterValue), Array)
+#2 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(48): Illuminate/Database/Connectors/Connector->tryAgainIfCausedByLostConnection(Object(PDOException), 'mysql:host=127....', 'root', Object(SensitiveParameterValue), Array)
+#3 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connectors/MySqlConnector.php(24): Illuminate/Database/Connectors/Connector->createConnection('mysql:host=127....', Array, Array)
+#4 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connectors/ConnectionFactory.php(185): Illuminate/Database/Connectors/MySqlConnector->connect(Array)
+#5 [internal function]: Illuminate/Database/Connectors/ConnectionFactory->{closure:Illuminate/Database/Connectors/ConnectionFactory::createPdoResolverWithHosts():180}()
+#6 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connection.php(1231): call_user_func(Object(Closure))
+#7 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connection.php(1267): Illuminate/Database/Connection->getPdo()
+#8 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connection.php(512): Illuminate/Database/Connection->getReadPdo()
+#9 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connection.php(407): Illuminate/Database/Connection->getPdoForSelect(true)
+#10 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connection.php(812): Illuminate/Database/Connection->{closure:Illuminate/Database/Connection::select():398}('select `nama_ob...', Array)
+#11 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connection.php(979): Illuminate/Database/Connection->runQueryCallback('select `nama_ob...', Array, Object(Closure))
+#12 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connection.php(958): Illuminate/Database/Connection->tryAgainIfCausedByLostConnection(Object(Illuminate/Database/QueryException), 'select `nama_ob...', Array, Object(Closure))
+#13 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connection.php(781): Illuminate/Database/Connection->handleQueryException(Object(Illuminate/Database/QueryException), 'select `nama_ob...', Array, Object(Closure))
+#14 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Connection.php(398): Illuminate/Database/Connection->run('select `nama_ob...', Array, Object(Closure))
+#15 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(3106): Illuminate/Database/Connection->select('select `nama_ob...', Array, true)
+#16 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(3362): Illuminate/Database/Query/Builder->runSelect()
+#17 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(3676): Illuminate/Database/Query/Builder->{closure:Illuminate/Database/Query/Builder::pluck():3360}()
+#18 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(3358): Illuminate/Database/Query/Builder->onceWithColumns(Array, Object(Closure))
+#19 C:/Users/Server/Project gueh/apotek-zema/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php(991): Illuminate/Database/Query/Builder->pluck('nama_obat', NULL)
+#20 C:/Users/Server/Project gueh/apotek-zema/storage/framework/test-search.php(13): Illuminate/Database/Eloquent/Builder->pluck('nama_obat')
+#21 {main}
+"} 
