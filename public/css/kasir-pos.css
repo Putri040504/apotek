@@ -143,35 +143,6 @@ body.pos-body {
     box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.2);
 }
 
-.pos-qty-wrap {
-    width: 90px;
-}
-
-.pos-qty-wrap input {
-    width: 100%;
-    text-align: center;
-    font-size: 1.1rem;
-    padding: 10px;
-    border: 2px solid var(--pos-border);
-    border-radius: 8px;
-}
-
-.pos-btn-add {
-    background: var(--pos-primary);
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    height: 46px;
-    white-space: nowrap;
-}
-
-.pos-btn-add:hover {
-    background: var(--pos-primary-dark);
-}
-
 .pos-main {
     display: flex;
     flex: 1;
@@ -358,11 +329,21 @@ body.pos-body {
     font-weight: 700;
 }
 
-.pos-cart-line .qty-control span {
-    min-width: 24px;
+.pos-cart-line .qty-control .pos-cart-qty {
+    width: 44px;
+    min-width: 44px;
     text-align: center;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
+    padding: 4px 2px;
+    border: 1px solid var(--pos-border);
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.pos-cart-line .qty-control .pos-cart-qty:focus {
+    outline: none;
+    border-color: var(--pos-primary);
 }
 
 .pos-cart-line .subtotal {

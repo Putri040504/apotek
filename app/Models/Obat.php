@@ -80,11 +80,52 @@ class Obat extends Model
     {
         $term = trim($term);
 
-        return $query->where(function (Builder $q) use ($term) {
-            $q->where('nama_obat', 'like', "%{$term}%")
-                ->orWhere('kode_obat', 'like', "%{$term}%")
-                ->orWhere('barcode', 'like', "%{$term}%");
-        });
+        if ($term === '') {
+            return $query;
+        }
+
+        $tokens = preg_split('/\s+/u', $term, -1, PREG_SPLIT_NO_EMPTY) ?: [$term];
+        $primary = $tokens[0];
+        $usePrefixOnly = count($tokens) === 1 && mb_strlen($primary) <= 2;
+
+        foreach ($tokens as $token) {
+            $escaped = static::escapeLike($token);
+            $like = '%'.$escaped.'%';
+            $prefix = $escaped.'%';
+
+            $query->where(function (Builder $q) use ($like, $prefix, $usePrefixOnly) {
+                if ($usePrefixOnly) {
+                    $q->where('nama_obat', 'like', $prefix)
+                        ->orWhere('kode_obat', 'like', $prefix)
+                        ->orWhere('barcode', 'like', $prefix);
+                } else {
+                    $q->where('nama_obat', 'like', $like)
+                        ->orWhere('kode_obat', 'like', $like)
+                        ->orWhere('barcode', 'like', $like);
+                }
+            });
+        }
+
+        $escapedPrimary = static::escapeLike($primary);
+        $prefixPrimary = $escapedPrimary.'%';
+        $likePrimary = '%'.$escapedPrimary.'%';
+
+        return $query
+            ->orderByRaw(
+                'CASE
+                    WHEN nama_obat LIKE ? THEN 0
+                    WHEN kode_obat LIKE ? OR barcode LIKE ? THEN 1
+                    WHEN nama_obat LIKE ? THEN 2
+                    ELSE 3
+                END',
+                [$prefixPrimary, $prefixPrimary, $prefixPrimary, $likePrimary]
+            )
+            ->orderBy('nama_obat');
+    }
+
+    protected static function escapeLike(string $value): string
+    {
+        return addcslashes($value, '%_\\');
     }
 
     /*

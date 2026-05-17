@@ -6,7 +6,6 @@
 
     const el = {
         search: document.getElementById('posSearch'),
-        qty: document.getElementById('posQty'),
         dropdown: document.getElementById('posDropdown'),
         results: document.getElementById('posSearchResults'),
         cartWrap: document.getElementById('posCartWrap'),
@@ -133,9 +132,7 @@
             node.addEventListener('click', () => {
                 const obat = items.find((o) => String(o.id) === String(node.dataset.id));
                 selectObat(obat);
-                addToCart(obat.id, parseInt(el.qty?.value || '1', 10)).catch((e) =>
-                    showToast(e.message, 'error')
-                );
+                addToCart(obat.id, 1).catch((e) => showToast(e.message, 'error'));
             });
         });
     }
@@ -219,6 +216,44 @@
                 }
             };
         });
+
+        document.querySelectorAll('[data-cart-qty]').forEach((input) => {
+            const commitQty = async () => {
+                const id = input.dataset.cartId;
+                const prev = parseInt(input.dataset.qty, 10);
+                const qty = parseInt(input.value, 10);
+
+                if (!qty || qty < 1) {
+                    input.value = prev;
+                    return;
+                }
+                if (qty === prev) {
+                    return;
+                }
+
+                try {
+                    const data = await api(config.routes.keranjangUpdate.replace('__ID__', id), {
+                        method: 'PATCH',
+                        headers: headers(),
+                        body: JSON.stringify({ jumlah: qty }),
+                    });
+                    applyCartResponse(data);
+                } catch (e) {
+                    input.value = prev;
+                    showToast(e.message, 'error');
+                }
+            };
+
+            input.addEventListener('change', () => {
+                commitQty().catch((e) => showToast(e.message, 'error'));
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    input.blur();
+                }
+            });
+        });
     }
 
     async function searchObat(q) {
@@ -264,7 +299,6 @@
     }
 
     async function scanByCode(kode) {
-        const qty = parseInt(el.qty?.value || '1', 10);
         const res = await fetch(config.routes.scan + '?kode=' + encodeURIComponent(kode), {
             headers: { 'X-CSRF-TOKEN': csrf, Accept: 'application/json' },
         });
@@ -274,32 +308,19 @@
             throw new Error(data.error || data.message || 'Obat tidak ditemukan');
         }
 
-        await addToCart(data.id, qty);
-        if (el.search) {
-            el.search.value = '';
-        }
-        selectedObat = null;
-        showToast(data.nama_obat + ' ditambahkan');
-        beep();
+        await addToCart(data.id, 1);
     }
 
-    async function handleScanOrSearch() {
-        const value = el.search.value.trim();
-        const qty = parseInt(el.qty?.value || '1', 10);
-
+    async function handleBarcodeEnter() {
+        const value = el.search?.value.trim();
         if (!value) {
             return;
         }
 
         try {
             await scanByCode(value);
-            return;
         } catch (e) {
-            if (selectedObat) {
-                await addToCart(selectedObat.id, qty);
-                return;
-            }
-            showToast(e.message || 'Pilih obat dari daftar atau scan kode obat', 'error');
+            showToast(e.message || 'Kode tidak dikenali — pilih obat dari hasil cari', 'error');
         }
     }
 
@@ -487,14 +508,10 @@
         el.search.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                handleScanOrSearch().catch((err) => showToast(err.message, 'error'));
+                handleBarcodeEnter().catch((err) => showToast(err.message, 'error'));
             }
         });
     }
-
-    document.getElementById('btnAddItem')?.addEventListener('click', () => {
-        handleScanOrSearch().catch((e) => showToast(e.message, 'error'));
-    });
 
     document.getElementById('btnPosCamera')?.addEventListener('click', openCameraScanner);
 

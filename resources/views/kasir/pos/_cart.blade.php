@@ -18,7 +18,9 @@
             <div class="qty-control">
                 <button type="button" data-cart-minus data-cart-id="{{ $item->id }}"
                     data-qty="{{ $item->jumlah }}">−</button>
-                <span>{{ $item->jumlah }}</span>
+                <input type="number" class="pos-cart-qty" data-cart-qty data-cart-id="{{ $item->id }}"
+                    data-qty="{{ $item->jumlah }}" value="{{ $item->jumlah }}" min="1"
+                    aria-label="Jumlah {{ $item->obat->nama_obat ?? '' }}">
                 <button type="button" data-cart-plus data-cart-id="{{ $item->id }}"
                     data-qty="{{ $item->jumlah }}">+</button>
             </div>

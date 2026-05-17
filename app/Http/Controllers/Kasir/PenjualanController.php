@@ -36,10 +36,11 @@ class PenjualanController extends Controller
             return response()->json([]);
         }
 
+        $limit = mb_strlen($q) <= 2 ? 30 : 20;
+
         $obat = Obat::sellable()
             ->searchTerm($q)
-            ->orderBy('nama_obat')
-            ->limit(15)
+            ->limit($limit)
             ->get();
 
         return response()->json($obat->map->toPosArray());

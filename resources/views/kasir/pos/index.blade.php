@@ -27,10 +27,11 @@
             <div class="pos-scan-wrap">
                 <label for="posSearch">
                     SCAN / CARI OBAT
-                    <span class="pos-kbd-hint">Enter · F2 focus · F3 kamera</span>
+                    <span class="pos-kbd-hint">Scan/Enter tambah +1 · klik hasil cari · F2 · F3 kamera</span>
                 </label>
                 <div class="pos-scan-input-row">
-                    <input type="text" id="posSearch" class="pos-scan-input" placeholder="Kode barcode atau nama obat..."
+                    <input type="text" id="posSearch" class="pos-scan-input"
+                        placeholder="Scan barcode (otomatis tambah) atau ketik nama obat..."
                         autocomplete="off" autofocus>
                     <button type="button" id="btnPosCamera" class="pos-btn-camera" title="Scan kamera (F3)">
                         <i class="bi bi-camera"></i>
@@ -38,13 +39,6 @@
                 </div>
                 <div id="posDropdown" class="pos-search-dropdown"></div>
             </div>
-            <div class="pos-qty-wrap">
-                <label for="posQty">Qty</label>
-                <input type="number" id="posQty" value="1" min="1">
-            </div>
-            <button type="button" id="btnAddItem" class="pos-btn-add">
-                <i class="bi bi-plus-lg"></i> Tambah
-            </button>
         </div>
 
         <div class="pos-main">
